@@ -1,0 +1,3 @@
+#!/bin/bash
+source ./py3_env/bin/activate
+python3 'bridge.py'
