@@ -44,6 +44,7 @@ class InteractiveMPLGraph:
         self._analysis = parent.analysis
         self._canvas_toolbar = None
         self._default_size = {}
+        self._default_size_edges = {}
         
         node_positions = self._analysis.get_current_node_positions()
         if node_positions is None: node_positions = self._analysis.get_node_positions_2d()
@@ -51,7 +52,7 @@ class InteractiveMPLGraph:
         edge_labels_occupancy = {(key.split(':')[0], key.split(':')[1]):value for key, value in self._analysis.get_occupancies(as_labels=True).items()}
         frame_time, frame_unit = self._parent._search_parameter['frame_time']
         edge_labels_endurance = {(key.split(':')[0], key.split(':')[1]):value for key, value in self._analysis.get_endurance_times(as_labels=True, frame_time=frame_time, frame_unit=frame_unit).items()}
-        
+        if self._parent._analysis_type == 'ww': edge_labels_nb_water = {(key.split(':')[0], key.split(':')[1]):value for key, value in self._analysis.get_nb_waters(as_labels=True).items()}
         graph = self._analysis.initial_graph
         f = 0.55
         len2fontsize = defaultdict(lambda: 6*f, {2:11*f, 3:11*f, 4:11*f, 5:11*f, 6:10*f, 7:9*f, 8:8*f, 9:7*f, 10:7*f})
@@ -72,15 +73,14 @@ class InteractiveMPLGraph:
         for u, v in graph.edges:
             subgraph = graph.subgraph([u, v])
             direction = list(subgraph.edges)[0]
-            handle = nx.draw_networkx_edges(subgraph, node_positions, width=1.5, alpha=0.5, ax=self.ax)
-            handle.set
+            handle = nx.draw_networkx_edges(subgraph, node_positions, width=1.0, alpha=0.5, ax=self.ax)
+            #handle.set
             segments = handle.get_segments()
             ta = trans_angle(segments[0][0], segments[0][1], self.ax)
             try: edge_label = {direction:edge_labels_occupancy[(u,v)]}
             except KeyError: edge_label = {direction:edge_labels_occupancy[(v,u)]}
             edge_label_occupancy = nx.draw_networkx_edge_labels(subgraph, node_positions, edge_labels=edge_label,
                                                  font_weight='bold', font_size=len2fontsize[6],
-                                                 min_source_margin=300, min_target_margin=300,
                                                  ax=self.ax)[direction]
             edge_label_occupancy.set_visible(False)
             edge_label_occupancy.set_rotation(ta)
@@ -89,12 +89,25 @@ class InteractiveMPLGraph:
             except KeyError: edge_label = {direction:edge_labels_endurance[(v,u)]}
             edge_label_endurance = nx.draw_networkx_edge_labels(subgraph, node_positions, edge_labels=edge_label,
                                                  font_weight='bold', font_size=len2fontsize[6],
-                                                 min_source_margin=300, min_target_margin=300,
                                                  ax=self.ax)[direction]
             edge_label_endurance.set_visible(False)
             edge_label_endurance.set_rotation(ta)
             
-            edge_data = {'handle':handle, 'direction':direction, 'active':True, 'all_labels':{'occupancy':edge_label_occupancy, 'endurance':edge_label_endurance}}
+            if self._parent._analysis_type == 'ww': 
+                try: edge_label = {direction:edge_labels_nb_water[(u,v)]}
+                except KeyError: edge_label = {direction:edge_labels_nb_water[(v,u)]}
+                edge_label_water = nx.draw_networkx_edge_labels(subgraph, node_positions, edge_labels=edge_label,
+                                                     font_weight='bold', font_size=len2fontsize[6],
+                                                     ax=self.ax)[direction]
+                edge_label_water.set_visible(False)
+                edge_label_water.set_rotation(ta)
+            
+                edge_data = {'handle':handle, 'direction':direction, 'active':True, 'all_labels':{'occupancy':edge_label_occupancy, 
+                                                                                                  'endurance':edge_label_endurance, 
+                                                                                                  'nb_water':edge_label_water}}
+            else:
+                edge_data = {'handle':handle, 'direction':direction, 'active':True, 'all_labels':{'occupancy':edge_label_occupancy, 'endurance':edge_label_endurance}}
+            
             self._adj[u][v] = edge_data
             self._adj[v][u] = edge_data
             
@@ -289,10 +302,9 @@ class InteractiveMPLGraph:
         if len(self.selected_nodes) > 0: node_handle.set_edgecolor('maroon')
         for node in rem_nodes: self.selected_nodes.remove(node)
         
-    def set_subgraph(self):
+    def set_subgraph(self, draw=True):
         subgraph = self._analysis.filtered_graph
         node_labels_active = self._parent.checkBox_bonds_graph_labels.isChecked()
-        edge_labels_active = self._parent.checkBox_bonds_occupancy.isChecked()
         for node in self._node:
             if node in subgraph.nodes:
                 self._node[node]['active'] = True
@@ -313,17 +325,14 @@ class InteractiveMPLGraph:
                 if (node, other_node) in subgraph.edges:
                     edge_handle.set_visible(True)
                     edge_data['active'] = True
-                    if edge_labels_active: 
-                        edge_label.set_visible(True)
-                    else: 
-                        edge_label.set_visible(False)
                 else:
                     edge_handle.set_visible(False)
                     edge_label.set_visible(False)
                     edge_data['active'] = False
-        self.canvas.draw_idle()
+        self.set_edge_labels(draw=False)
+        if draw: self.canvas.draw_idle()
             
-    def set_colors(self):
+    def set_colors(self, draw=True):
         
         if self.ax.get_legend() is not None: self.ax.get_legend().remove()
         if self.cax is not None:
@@ -376,9 +385,9 @@ class InteractiveMPLGraph:
             node_handle.set_facecolor(color)
             node_handle.set_edgecolor(color)
         
-        self.canvas.draw_idle()
+        if draw: self.canvas.draw_idle()
     
-    def set_node_positions(self):
+    def set_node_positions(self, draw=True):
         projection = 'PCA'
         if self._parent.radioButton_rotation_xy.isChecked(): projection = 'XY'
         elif self._parent.radioButton_rotation_zy.isChecked(): projection = 'ZY'
@@ -412,9 +421,9 @@ class InteractiveMPLGraph:
             
         self.ax.set_xlim(minx-xmargin, maxx+xmargin)
         self.ax.set_ylim(miny-ymargin, maxy+ymargin)
-        self.canvas.draw_idle()
+        if draw: self.canvas.draw_idle()
     
-    def set_nodesize(self):
+    def set_nodesize(self, draw=True):
         for node in self._node:
             offset = self._default_size[node][0]/2
             size = offset + 2/(self._default_size[node][0]) * (self._parent.horizontalSlider_nodes.value()/100*self._default_size[node][0])**2
@@ -424,20 +433,33 @@ class InteractiveMPLGraph:
             size = offset + self._parent.horizontalSlider_nodes.value()/100*self._default_size[node][1]
             label_handle = self._node[node]['label']
             label_handle.set_size(size)
-        self.canvas.draw_idle()
+        if draw: self.canvas.draw_idle()
+        
+    def set_edgesize(self, draw=True):
+        for node in self._node:
+            offset = self._default_size_edge[node][0]/2
+            size = offset + 2/(self._default_size[node][0]) * (self._parent.horizontalSlider_nodes.value()/100*self._default_size[node][0])**2
+            node_handle = self._node[node]['handle']
+            node_handle.set_sizes([size])
+            offset = self._default_size[node][1]/2
+            size = offset + self._parent.horizontalSlider_nodes.value()/100*self._default_size[node][1]
+            label_handle = self._node[node]['label']
+            label_handle.set_size(size)
+        if draw: self.canvas.draw_idle()
     
-    def set_node_labels(self):
+    def set_node_labels(self, draw=True):
         labels_active = self._parent.checkBox_bonds_graph_labels.isChecked()
         for node in self._node:
             show_label = self._node[node]['active']
             label = self._node[node]['label']
             if labels_active and show_label: label.set_visible(True)
             else: label.set_visible(False)
-        self.canvas.draw_idle()
+        if draw: self.canvas.draw_idle()
         
-    def set_edge_labels(self):
+    def set_edge_labels(self, draw=True):
         if self._parent.checkBox_bonds_occupancy.isChecked(): active_label_type = 'occupancy'
         elif self._parent.checkBox_bonds_endurance.isChecked(): active_label_type = 'endurance'
+        elif self._parent.checkBox_nb_water.isChecked(): active_label_type = 'nb_water'
         else: active_label_type = None
         for node, other_node, edge_data in self.edges():
             show_label = edge_data['active']
@@ -448,7 +470,7 @@ class InteractiveMPLGraph:
                     label.set_visible(True)
                 else: 
                     label.set_visible(False)
-        self.canvas.draw_idle()
+        if draw: self.canvas.draw_idle()
     
     def get_active_nodes(self):
         return [node for node in self._node if self._node[node]['active']]

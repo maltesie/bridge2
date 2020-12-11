@@ -376,7 +376,7 @@ def string_in_columns(s):
     lines = s.strip('\n').split('\n')
     elements = [line.split(' ') for line in lines]
     rotated_elements = np.array(elements, dtype=np.str).T
-    return_string = '\n'.join([','.join(rot_element) for rot_element in rotated_elements])
+    return_string = '\n'.join(['\t'.join(rot_element) for rot_element in rotated_elements])
     return return_string
 
 def histogram_to_string(data, mi=None, ma=None, nb_bins=10, labels=None):

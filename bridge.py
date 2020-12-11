@@ -16,6 +16,13 @@ from core.helpfunctions import (Error, Info, ranges_to_numbers,
                                 acceptor_names_global, donor_names_global)
 
 all_filter = ['occupancy', 'shortest', 'connected', 'specific', 'between', 'selected_nodes']
+filter_description = {'occupancy': 'Normalized Occupancy', 
+                      'shortest': 'All Shortest Paths', 
+                      'connected': 'Connected Component', 
+                      'specific': 'Specific Path', 
+                      'between': 'Between Sections', 
+                      'selected_nodes': 'Selected Nodes',
+                      'None': 'none'}
 
 class DefaultAtomsDialog(QDialog, Ui_DefaultAtomsDialog):
     
@@ -104,8 +111,8 @@ class NewAnalysisDialog(QDialog, Ui_NewAnalysisDialog):
         self.checkBox_all_nitrogen.setChecked(False)
         self.checkBox_all_sulphur.setChecked(False)
         self.checkBox_consider_backbone.setChecked(False)
-        self.checkBox_disulphide_bridges.setChecked(False)
-        self.lineEdit_disulphide_distance.setText('2.05')
+        #self.checkBox_disulphide_bridges.setChecked(False)
+        #self.lineEdit_disulphide_distance.setText('2.05')
         self.line_bonds_start.setText('1')
         self.line_bonds_step.setText('1')
         self.line_bonds_stop.setText('-1')
@@ -138,7 +145,7 @@ class NewAnalysisDialog(QDialog, Ui_NewAnalysisDialog):
         around = self.line_around_value.text()
         hydrophobic_distance = self.lineEdit_hydrophobic_distance.text()
         partially_hydrophobic_residues = self.checkBox_partially_hydrophobic.isChecked()
-        ss_distance = self.lineEdit_disulphide_distance.text()
+        #ss_distance = self.lineEdit_disulphide_distance.text()
         max_water = self.line_wire_max_water.text()
         crytal_structure = self.checkBox_bonds_donors_without_hydrogen.isChecked()
         consider_backbone = self.checkBox_consider_backbone.isChecked()
@@ -149,7 +156,7 @@ class NewAnalysisDialog(QDialog, Ui_NewAnalysisDialog):
         if self.checkBox_all_nitrogen.isChecked(): add_all_donor_acceptor.append('N')
         if self.checkBox_all_sulphur.isChecked(): add_all_donor_acceptor.append('S')
         check_angle = self.checkBox_angle.isChecked()
-        compute_ss = self.checkBox_disulphide_bridges.isChecked()
+        #compute_ss = self.checkBox_disulphide_bridges.isChecked()
         allow_direct_bonds = self.checkBox_wires_allow_direct_bonds.isChecked()
         ww_in_hull = self.checkBo_wires_convex.isChecked()
         not_water_water = self.checkBox_not_water_water.isChecked()
@@ -201,7 +208,7 @@ class NewAnalysisDialog(QDialog, Ui_NewAnalysisDialog):
                        'hydrophobic_distance':None,
                        'partially_hydrophobic_residues':None,
                        'ss_distance':None,
-                       'compute_ss':compute_ss,
+                       #'compute_ss':compute_ss,
                        'consider_backbone':consider_backbone,
                        'frame_time':(None, None),
                        'add_residues':0}
@@ -258,11 +265,11 @@ class NewAnalysisDialog(QDialog, Ui_NewAnalysisDialog):
             Error('Datatype not understood!', 'Please specify the beginning n-terminal residue as an integer.')
             return
         
-        if compute_ss:
-            try:
-                search_args['ss_distance'] = float(ss_distance)
-            except:
-                Error('Datatype not understood!', 'Please specify the sulphur-sulphur distance as a floating point number.')
+        #if compute_ss:
+        #    try:
+        #        search_args['ss_distance'] = float(ss_distance)
+        #    except:
+        #        Error('Datatype not understood!', 'Please specify the sulphur-sulphur distance as a floating point number.')
         
         self.main_window._search_parameter = search_args 
         
@@ -333,8 +340,12 @@ class NewAnalysisDialog(QDialog, Ui_NewAnalysisDialog):
         elif ww_dict: self.main_window.analysis.set_water_wires(max_water=search_args['max_water'], allow_direct_bonds=search_args['allow_direct_bonds'])
         elif hydrophobic: self.main_window.analysis.set_hydrophobic_contacts_in_selection()
         
+        self.main_window.analysis.add_missing_residues = int(self.lineEdit_add_residue.text())
         self.main_window.analysis.set_node_positions_3d(include_water=include_water)
         self.main_window.analysis.set_centralities()
+        self.main_window._active_filters = {}
+        self.main_window.current_filter = None
+        self.main_window.apply_filters()
         
  
 class ResultsDialog(QDialog, Ui_ResultsDialog):
@@ -495,8 +506,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         else: angle_string = "No"
         donor_string = ", ".join(self.default_atoms_dialog.default_donors)
         acceptor_string = ", ".join(self.default_atoms_dialog.default_acceptors)
-        if self._search_parameter['ss_distance'] is not None: disulphide_string = "Yes, with a maximum Sulphur-Sulphur distance of {}A".format(self._search_parameter['ss_distance'])
-        else: disulphide_string = "No disulphide bridges included in the search"
+        #if self._search_parameter['ss_distance'] is not None: disulphide_string = "Yes, with a maximum Sulphur-Sulphur distance of {}A".format(self._search_parameter['ss_distance'])
+        disulphide_string = "No disulphide bridges included in the search"
         if self._search_parameter['frame_time'] == (None,None): time_string = "No time specified"
         else: time_string = "{}{}".format(*self._search_parameter['frame_time'])
         stop = self._analysis_parameter['stop']
@@ -653,8 +664,8 @@ starting n-terminal residue: {}\n\n\
             if hydrophobic_distance is None: hydrophobic_distance = '5.0'
             ss_distance = self._search_parameter['ss_distance']
             if ss_distance is None: ss_distance = '2.05'
-            compute_ss = self._search_parameter['compute_ss']
-            if compute_ss is None: compute_ss = False
+            #compute_ss = self._search_parameter['compute_ss']
+            #if compute_ss is None: compute_ss = False
             ww_in_hull = self._search_parameter['ww_in_hull']
             if ww_in_hull is None: ww_in_hull = False
             partially_hydrophobic_residues = self._search_parameter['partially_hydrophobic_residues']
@@ -687,14 +698,14 @@ starting n-terminal residue: {}\n\n\
             self.new_analysis_dialog.line_bonds_angle.setText(str(angle))
             self.new_analysis_dialog.line_around_value.setText(str(around))
             self.new_analysis_dialog.line_wire_max_water.setText(str(max_water))
-            self.new_analysis_dialog.lineEdit_disulphide_distance.setText(str(ss_distance))
+            #self.new_analysis_dialog.lineEdit_disulphide_distance.setText(str(ss_distance))
             self.new_analysis_dialog.lineEdit_hydrophobic_distance.setText(str(hydrophobic_distance))
             
             if not crystal_structure: self.new_analysis_dialog.checkBox_angle.setChecked(check_angle)
             self.new_analysis_dialog.checkBox_residuewise.setChecked(residuewise)
             self.new_analysis_dialog.checkBox_partially_hydrophobic.setChecked(partially_hydrophobic_residues)
             self.new_analysis_dialog.checkBo_wires_convex.setChecked(ww_in_hull)
-            self.new_analysis_dialog.checkBox_disulphide_bridges.setChecked(compute_ss)
+            #self.new_analysis_dialog.checkBox_disulphide_bridges.setChecked(compute_ss)
             self.new_analysis_dialog.checkBox_bonds_donors_without_hydrogen.setChecked(crystal_structure)
             self.new_analysis_dialog.checkBox_all_oxygen.setChecked('O' in add_all_donor_acceptor)
             self.new_analysis_dialog.checkBox_all_nitrogen.setChecked('N' in add_all_donor_acceptor)
@@ -744,6 +755,7 @@ starting n-terminal residue: {}\n\n\
             self.checkBox_color_legend.clicked.disconnect(self.interactive_graph.set_colors)
             self.checkBox_bonds_occupancy.clicked.disconnect(self.edge_labels_occupancy)
             self.checkBox_bonds_endurance.clicked.disconnect(self.edge_labels_endurance)
+            self.checkBox_nb_water.clicked.disconnect(self.edge_labels_nb_waters)
             self.buttonGroup_rotation.buttonClicked.disconnect(self.interactive_graph.set_node_positions)
             self.horizontalSlider_frame.valueChanged.disconnect(self.interactive_graph.set_node_positions)
             
@@ -762,6 +774,7 @@ starting n-terminal residue: {}\n\n\
         self.checkBox_color_legend.clicked.connect(self.interactive_graph.set_colors)
         self.checkBox_bonds_occupancy.clicked.connect(self.edge_labels_occupancy)
         self.checkBox_bonds_endurance.clicked.connect(self.edge_labels_endurance)
+        self.checkBox_nb_water.clicked.connect(self.edge_labels_nb_waters)
         self.buttonGroup_rotation.buttonClicked.connect(self.interactive_graph.set_node_positions)
         self.horizontalSlider_frame.valueChanged.connect(self.interactive_graph.set_node_positions)
         
@@ -782,6 +795,10 @@ starting n-terminal residue: {}\n\n\
         self.checkBox_bonds_graph_labels.setChecked(True)
         self.checkBox_color_legend.setChecked(False)
         
+        self.comboBox_filter_segna.clear()
+        self.comboBox_filter_segnb.clear()
+        self.comboBox_filter_resna.clear()
+        self.comboBox_filter_resnb.clear()
         self.comboBox_filter_segna.addItems(['segname']+sorted(segnames))
         self.comboBox_filter_segnb.addItems(['segname']+sorted(segnames))
         self.comboBox_filter_resna.addItems(['resname']+sorted(resnames))
@@ -793,18 +810,18 @@ starting n-terminal residue: {}\n\n\
         self.repaint()        
     
     def edge_labels_occupancy(self):
-        if self.checkBox_bonds_endurance.isChecked(): 
-            self.checkBox_bonds_endurance.setChecked(False)
+        self.checkBox_bonds_endurance.setChecked(False)
+        self.checkBox_nb_water.setChecked(False)
         self.interactive_graph.set_edge_labels()
         
     def edge_labels_endurance(self):
-        if self.checkBox_bonds_occupancy.isChecked(): 
-            self.checkBox_bonds_occupancy.setChecked(False)
+        self.checkBox_bonds_occupancy.setChecked(False)
+        self.checkBox_nb_water.setChecked(False)
         self.interactive_graph.set_edge_labels()
         
     def edge_labels_nb_waters(self):
-        if self.checkBox_bonds_occupancy.isChecked(): 
-            self.checkBox_bonds_occupancy.setChecked(False)
+        self.checkBox_bonds_occupancy.setChecked(False)
+        self.checkBox_bonds_endurance.setChecked(False)
         self.interactive_graph.set_edge_labels()
     
     def error_in_worker(self, error_tuple):
@@ -886,7 +903,6 @@ starting n-terminal residue: {}\n\n\
             self.comboBox_filter_resnb.setCurrentIndex(0)
             self.comboBox_filter_resna.setCurrentIndex(0)
             self.comboBox_filter_segnb.setCurrentIndex(0)
-            
             self.comboBox_filter_segna.setCurrentIndex(0)
             self._connect_between_comboboxes()
             self.groupBox_between_segments.setChecked(False)
@@ -897,7 +913,6 @@ starting n-terminal residue: {}\n\n\
             self.comboBox_filter_resnb.setCurrentIndex(0)
             self.comboBox_filter_resna.setCurrentIndex(0)
             self.comboBox_filter_segnb.setCurrentIndex(0)
-            
             self.comboBox_filter_segna.setCurrentIndex(0)
             self._connect_between_comboboxes()
         elif self.groupBox_between_segments.isChecked() and (self._current_filter != 'between') and ('between' in self._active_filters):
@@ -937,7 +952,7 @@ starting n-terminal residue: {}\n\n\
         
         self.close_open_filters()
         self.interactive_graph.reset_selected_nodes()
-        self.label_current_filter.setText('current filter: ' + str(self._current_filter))
+        self.label_current_filter.setText('current filter: ' + filter_description[str(self._current_filter)])
         if self.analysis is not None:
             self.apply_filters()
     
@@ -975,7 +990,7 @@ starting n-terminal residue: {}\n\n\
                 return
             if len(self._active_filters) > 0:
                 for key in self._active_filters.keys(): self._current_filter = key
-                print('after check', self._active_filters, self._current_filter)
+                #print('after check', self._active_filters, self._current_filter)
             else:
                 self._current_filter = None
                 self.deactivate_all_filters()

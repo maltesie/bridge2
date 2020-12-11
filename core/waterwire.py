@@ -336,7 +336,13 @@ class WireAnalysis(NetworkAnalysis):
                 endurance_times = {key:_hf.unit_to_string(value*frame_time, frame_unit) for key, value in endurance_times.items()}
             else:
                 endurance_times = {key:str(value) for key, value in endurance_times.items()}
-        return endurance_times    
+        return endurance_times 
+    
+    def get_nb_waters(self, as_labels=False):
+        nb_waters = {key:value[value!=_np.inf].mean() for key,value in self.wire_lengths.items()}
+        if as_labels:
+            nb_waters = {key:str(round(value,1)) for key,value in nb_waters.items()}
+        return nb_waters
     
     def _set_results(self, wire_lengths):
         occupancy = {connection:wire_lengths[connection]!=_np.inf for connection in wire_lengths}

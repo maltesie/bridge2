@@ -3,16 +3,13 @@
 ################################################################################
 ## Form generated from reading UI file 'new_analysis_dialog.ui'
 ##
-## Created by: Qt User Interface Compiler version 5.15.0
+## Created by: Qt User Interface Compiler version 5.15.2
 ##
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
 
-from PySide2.QtCore import (QCoreApplication, QDate, QDateTime, QMetaObject,
-    QObject, QPoint, QRect, QSize, QTime, QUrl, Qt)
-from PySide2.QtGui import (QBrush, QColor, QConicalGradient, QCursor, QFont,
-    QFontDatabase, QIcon, QKeySequence, QLinearGradient, QPalette, QPainter,
-    QPixmap, QRadialGradient)
+from PySide2.QtCore import *
+from PySide2.QtGui import *
 from PySide2.QtWidgets import *
 
 
@@ -148,32 +145,6 @@ class Ui_Dialog(object):
         self.checkBox_consider_backbone.setObjectName(u"checkBox_consider_backbone")
 
         self.verticalLayout_5.addWidget(self.checkBox_consider_backbone)
-
-        self.horizontalLayout_3 = QHBoxLayout()
-        self.horizontalLayout_3.setObjectName(u"horizontalLayout_3")
-        self.checkBox_disulphide_bridges = QCheckBox(self.groupBox)
-        self.checkBox_disulphide_bridges.setObjectName(u"checkBox_disulphide_bridges")
-
-        self.horizontalLayout_3.addWidget(self.checkBox_disulphide_bridges)
-
-        self.lineEdit_disulphide_distance = QLineEdit(self.groupBox)
-        self.lineEdit_disulphide_distance.setObjectName(u"lineEdit_disulphide_distance")
-        self.lineEdit_disulphide_distance.setMaximumSize(QSize(60, 16777215))
-        self.lineEdit_disulphide_distance.setAlignment(Qt.AlignRight|Qt.AlignTrailing|Qt.AlignVCenter)
-
-        self.horizontalLayout_3.addWidget(self.lineEdit_disulphide_distance)
-
-        self.label_9 = QLabel(self.groupBox)
-        self.label_9.setObjectName(u"label_9")
-
-        self.horizontalLayout_3.addWidget(self.label_9)
-
-        self.horizontalSpacer_4 = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
-
-        self.horizontalLayout_3.addItem(self.horizontalSpacer_4)
-
-
-        self.verticalLayout_5.addLayout(self.horizontalLayout_3)
 
 
         self.verticalLayout_3.addLayout(self.verticalLayout_5)
@@ -408,19 +379,6 @@ class Ui_Dialog(object):
 
         self.horizontalLayout_13.addItem(self.horizontalSpacer_11)
 
-        self.checkBox = QCheckBox(self.groupBox_4)
-        self.checkBox.setObjectName(u"checkBox")
-        self.checkBox.setEnabled(False)
-
-        self.horizontalLayout_13.addWidget(self.checkBox)
-
-        self.lineEdit = QLineEdit(self.groupBox_4)
-        self.lineEdit.setObjectName(u"lineEdit")
-        self.lineEdit.setEnabled(False)
-        self.lineEdit.setMaximumSize(QSize(60, 16777215))
-
-        self.horizontalLayout_13.addWidget(self.lineEdit)
-
 
         self.verticalLayout_8.addLayout(self.horizontalLayout_13)
 
@@ -509,9 +467,6 @@ class Ui_Dialog(object):
         self.checkBox_all_sulphur.setText(QCoreApplication.translate("Dialog", u"S*", None))
         self.label_13.setText(QCoreApplication.translate("Dialog", u" atoms as donors and acceptors", None))
         self.checkBox_consider_backbone.setText(QCoreApplication.translate("Dialog", u"include backbone atoms", None))
-        self.checkBox_disulphide_bridges.setText(QCoreApplication.translate("Dialog", u"compute disulphide bridges with max S-S distance of", None))
-        self.lineEdit_disulphide_distance.setText(QCoreApplication.translate("Dialog", u"2.05", None))
-        self.label_9.setText(QCoreApplication.translate("Dialog", u"[A]", None))
         self.groupBox_5.setTitle(QCoreApplication.translate("Dialog", u"Frames", None))
         self.label_6.setText(QCoreApplication.translate("Dialog", u"first", None))
         self.line_bonds_start.setText(QCoreApplication.translate("Dialog", u"1", None))
@@ -567,7 +522,6 @@ class Ui_Dialog(object):
         self.comboBox_frame_time_unit.setItemText(2, QCoreApplication.translate("Dialog", u"fs", None))
         self.comboBox_frame_time_unit.setItemText(3, QCoreApplication.translate("Dialog", u"as", None))
 
-        self.checkBox.setText(QCoreApplication.translate("Dialog", u"declare time origin", None))
         self.label_10.setText(QCoreApplication.translate("Dialog", u"Declare offset for n-terminal residue: ", None))
         self.lineEdit_add_residue.setText(QCoreApplication.translate("Dialog", u"0", None))
         self.button_cancel.setText(QCoreApplication.translate("Dialog", u"Cancel", None))

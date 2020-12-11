@@ -243,7 +243,8 @@ class NetworkAnalysis:
                 normalization_factor = (nb_nodes - 1)*(nb_nodes - 2)/2
             elif centrality_type == 'degree': 
                 centrality_i = _nx.degree_centrality(g_i)
-                normalization_factor = len(centrality_i) - 1
+                normalization_factor = len(centrality_i)
+                centrality_i = {key:int(round(value*normalization_factor)) for key, value in centrality_i.items()}
             elif centrality_type == 'biological': 
                 centrality_i, normalization_factor = _hf.biological_centrality(g_i)
             else: 
