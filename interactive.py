@@ -44,7 +44,6 @@ class InteractiveMPLGraph:
         self._analysis = parent.analysis
         self._canvas_toolbar = None
         self._default_size = {}
-        self._default_size_edges = {}
         
         node_positions = self._analysis.get_current_node_positions()
         if node_positions is None: node_positions = self._analysis.get_node_positions_2d()
@@ -66,7 +65,7 @@ class InteractiveMPLGraph:
             handle = nx.draw_networkx_nodes(subgraph, node_positions, node_color=default_colors[0], alpha=0.5, ax=self.ax)
 
             self._node[node] = {'handle':handle, 'label':label, 'active':True, 'color':default_colors[0]}
-            self._default_size[node] = (handle.get_sizes()[0], len2fontsize[label_length])
+            self._default_size['node'] = (handle.get_sizes()[0], len2fontsize[label_length])
             self._adj[node] = {}
             
         
@@ -74,7 +73,7 @@ class InteractiveMPLGraph:
             subgraph = graph.subgraph([u, v])
             direction = list(subgraph.edges)[0]
             handle = nx.draw_networkx_edges(subgraph, node_positions, width=1.0, alpha=0.5, ax=self.ax)
-            #handle.set
+            self._default_size['edge'] = handle.get_linewidth()
             segments = handle.get_segments()
             ta = trans_angle(segments[0][0], segments[0][1], self.ax)
             try: edge_label = {direction:edge_labels_occupancy[(u,v)]}
@@ -84,6 +83,7 @@ class InteractiveMPLGraph:
                                                  ax=self.ax)[direction]
             edge_label_occupancy.set_visible(False)
             edge_label_occupancy.set_rotation(ta)
+            self._default_size['label'] = edge_label_occupancy.get_fontsize()
             
             try: edge_label = {direction:edge_labels_endurance[(u,v)]}
             except KeyError: edge_label = {direction:edge_labels_endurance[(v,u)]}
@@ -102,11 +102,12 @@ class InteractiveMPLGraph:
                 edge_label_water.set_visible(False)
                 edge_label_water.set_rotation(ta)
             
-                edge_data = {'handle':handle, 'direction':direction, 'active':True, 'all_labels':{'occupancy':edge_label_occupancy, 
-                                                                                                  'endurance':edge_label_endurance, 
-                                                                                                  'nb_water':edge_label_water}}
+                edge_data = {'handle':handle, 'direction':direction, 'active':True, 'color':'black', 'all_labels':{'occupancy':edge_label_occupancy, 
+                                                                                                                 'endurance':edge_label_endurance, 
+                                                                                                                 'nb_water':edge_label_water}}
             else:
-                edge_data = {'handle':handle, 'direction':direction, 'active':True, 'all_labels':{'occupancy':edge_label_occupancy, 'endurance':edge_label_endurance}}
+                edge_data = {'handle':handle, 'direction':direction, 'active':True, 'color':'black', 'all_labels':{'occupancy':edge_label_occupancy, 
+                                                                                                                 'endurance':edge_label_endurance}}
             
             self._adj[u][v] = edge_data
             self._adj[v][u] = edge_data
@@ -299,9 +300,15 @@ class InteractiveMPLGraph:
                 node_handle.set_edgecolor(self._node[node]['color'])
             node_handle.set_linewidth(3.0)
             node_handle.set_edgecolor('black')
-        if len(self.selected_nodes) > 0: node_handle.set_edgecolor('maroon')
         for node in rem_nodes: self.selected_nodes.remove(node)
-        
+    
+    def set_edge_color(self):
+        for node, other_node, edge_data in self.edges():
+            edge_handle = edge_data['handle']
+            edge_handle.set_facecolor(edge_data['color'])
+            edge_handle.set_edgecolor(edge_data['color'])
+        self.canvas.draw_idle()
+
     def set_subgraph(self, draw=True):
         subgraph = self._analysis.filtered_graph
         node_labels_active = self._parent.checkBox_bonds_graph_labels.isChecked()
@@ -425,26 +432,29 @@ class InteractiveMPLGraph:
     
     def set_nodesize(self, draw=True):
         for node in self._node:
-            offset = self._default_size[node][0]/2
-            size = offset + 2/(self._default_size[node][0]) * (self._parent.horizontalSlider_nodes.value()/100*self._default_size[node][0])**2
+            offset = self._default_size['node'][0]/2
+            size = offset + 2/(self._default_size['node'][0]) * (self._parent.horizontalSlider_nodes.value()/100*self._default_size['node'][0])**2
             node_handle = self._node[node]['handle']
             node_handle.set_sizes([size])
-            offset = self._default_size[node][1]/2
-            size = offset + self._parent.horizontalSlider_nodes.value()/100*self._default_size[node][1]
+            offset = self._default_size['node'][1]/2
+            size = offset + self._parent.horizontalSlider_nodes.value()/100*self._default_size['node'][1]
             label_handle = self._node[node]['label']
             label_handle.set_size(size)
         if draw: self.canvas.draw_idle()
         
     def set_edgesize(self, draw=True):
-        for node in self._node:
-            offset = self._default_size_edge[node][0]/2
-            size = offset + 2/(self._default_size[node][0]) * (self._parent.horizontalSlider_nodes.value()/100*self._default_size[node][0])**2
-            node_handle = self._node[node]['handle']
-            node_handle.set_sizes([size])
-            offset = self._default_size[node][1]/2
-            size = offset + self._parent.horizontalSlider_nodes.value()/100*self._default_size[node][1]
-            label_handle = self._node[node]['label']
-            label_handle.set_size(size)
+        for node, other_node, edge_data in self.edges():
+            offset = self._default_size['edge'] / 2
+            size = offset + self._default_size['edge'] * (self._parent.horizontalSlider_edges.value()/100)
+            edge_data['handle'].set_linewidth(size)
+        if draw: self.canvas.draw_idle()
+        
+    def set_labelsize(self, draw=True):
+        for node, other_node, edge_data in self.edges():
+            offset = self._default_size['label'] / 2
+            size = offset + self._default_size['label'] * (self._parent.horizontalSlider_labels.value()/100)
+            for typ, label_handle in edge_data['all_labels'].items():
+                label_handle.set_fontsize(size)
         if draw: self.canvas.draw_idle()
     
     def set_node_labels(self, draw=True):
