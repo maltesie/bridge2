@@ -10,13 +10,14 @@ from new_analysis_dialog import Ui_Dialog as Ui_NewAnalysisDialog
 from default_atoms_dialog import Ui_Dialog as Ui_DefaultAtomsDialog
 from results_dialog import Ui_Dialog as Ui_ResultsDialog
 from multithreading import Worker
+import numpy as np
 from core import HbondAnalysis, WireAnalysis, HydrophobicAnalysis
 from interactive import InteractiveMPLGraph as igraph, default_colors
 from core.helpfunctions import (Error, Info, ranges_to_numbers, 
                                 acceptor_names_global, donor_names_global)
 
 all_filter = ['occupancy', 'shortest', 'connected', 'specific', 'between', 'selected_nodes']
-filter_description = {'occupancy': 'Normalized Occupancy', 
+filter_description = {'occupancy': 'Occupancy', 
                       'shortest': 'All Shortest Paths', 
                       'connected': 'Connected Component', 
                       'specific': 'Specific Path', 
@@ -291,12 +292,16 @@ class NewAnalysisDialog(QDialog, Ui_NewAnalysisDialog):
             }
         
         self.main_window._analysis_parameter = kwargs
+        if self.main_window.working:
+            Error('Multi-Threading Error!', 'There is another computation running. If this keeps happening, please restart Bridge.')
+            return
         worker = Worker(self.compute_initial_state, **kwargs) # Any other args, kwargs are passed to the run function
         worker.signals.finished.connect(self.main_window.init_interactive_graph)
         worker.signals.progress.connect(self.main_window.update_status_bar)
         worker.signals.error.connect(self.error_in_worker)
         self.main_window.statusbar.showMessage('Started initialization...')
         self.main_window.statusbar.repaint()
+        self.main_window.working = True
         self.main_window.threadpool.start(worker)
         
         self.close()
@@ -376,6 +381,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         super().__init__()
         self.setupUi(self)
         self.new_analysis_dialog = NewAnalysisDialog(self)
+        self.working = False
         self.default_atoms_dialog = DefaultAtomsDialog()
         self.results_dialog = ResultsDialog()
         self.interactive_graph = None
@@ -462,7 +468,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         result_string = "Bridge2 analysis summary from " + datetime.now().strftime("%d/%m/%Y %H:%M:%S") + "\n\n"
         if self._search_parameter['algorithm'] == 'hb_selection': algorithm_string = "H bonds in selection"
         elif self._search_parameter['algorithm'] == 'hb_around': algorithm_string = "H bonds in selection and water within {}A of the selection".format(self._search_parameter['around'])
-        elif self._search_parameter['algorithm'] == 'ww_dict': algorithm_string = "Water wires in selection with maximum {} waters per wire.\nSearch confined to convex hull around selection: {}\nDirect H bonds allowed in search: {}".format(self._search_parameter['max_water'], yes_no[self._search_parameter['ww_in_hull']], yes_no[self._search_parameter['direct_bonds']])
+        elif self._search_parameter['algorithm'] == 'ww_dict': algorithm_string = "Water wires in selection with maximum {} waters per wire.\nSearch confined to convex hull around selection: {}\nDirect H bonds allowed in search: {}".format(self._search_parameter['max_water'], yes_no[self._search_parameter['ww_in_hull']], yes_no[self._search_parameter['allow_direct_bonds']])
         elif self._search_parameter['algorithm'] == 'hydrophobic': algorithm_string = "Hydrophobic contacts in selection within a distance of {}A\nAdded partially hydrophobic residues: {}".format(self._search_parameter['hydrophobic_distance'], yes_no[self._search_parameter['partially_hydrophobic']])
         
         between_filter_string = ""
@@ -483,23 +489,24 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         if self.groupBox_specific_path.isChecked() and ('specific' in self._active_filters): filter_dict['specific'] = "Specific Path: {}".format(' ,'.join(self._active_filters['specific']))
         if self.groupBox_shortest_paths.isChecked() and ('shortest' in self._active_filters): filter_dict['shortest'] = "Shortest Paths: Between node {} and node {}.".format(*self._active_filters['shortest'])
         if self.groupBox_between_segments.isChecked() and ('between' in self._active_filters): filter_dict['between'] = between_filter_string
-        if self.groupBox_occupancy.isChecked() and ('occupancy' in self._active_filters): filter_dict['occupancy'] = "Occupancy: Set threshold of normalized occupancy of {}".format(self._active_filters['occupancy'])
+        if self.groupBox_occupancy.isChecked() and ('occupancy' in self._active_filters): filter_dict['occupancy'] = "Occupancy: Set threshold of occupancy of {}%".format(self._active_filters['occupancy'])
         if self.checkBox_selected_nodes.isChecked() and ('selected_nodes' in self._active_filters): filter_dict['selected_nodes'] = "Selection: Graph was reduced by hand"
         if self.groupBox_connected.isChecked() and ('connected' in self._active_filters): filter_dict['connected'] = "Connected Component: Connected component that contains root node {}".format(self._active_filters['connected'])
-        filter_string = '\n'.join([filter_dict[active_filter] for active_filter in self._active_filters])
+        if len(self._active_filters) == 0: filter_string = 'No filters applied.'
+        else: filter_string = '\n'.join([filter_dict[active_filter] for active_filter in self._active_filters])
         
         end_times = self.analysis.get_endurance_times()
         if self._analysis_type == 'ww':
-            average_water = {key: res.mean() for key, res in self.analysis.wire_lengths.items()}
-            edges_string = "pair occupancy endurance_time avg_nb_water"
-            edges_string += "\n".join(['{} {:.2f} {} {:.2f}'.format(key, 
-                                      res.mean(), 
+            average_water = {key: res[res!=np.inf].mean() for key, res in self.analysis.wire_lengths.items()}
+            edges_string = "partner1:partner2\toccupancy\tendurance_time\tavg_nb_water\n\n"
+            edges_string += "\n".join(['{}\t{:.1f}\t{}\t{:.1f}'.format(key, 
+                                      res.mean()*100, 
                                       end_times[key],
                                       average_water[key]) for key, res in self.analysis.filtered_results.items()])
         else:
-            edges_string = "pair occupancy endurance_time\n\n"
-            edges_string += "\n".join(['{} {:.2f} {}'.format(key, 
-                                      res.mean(), 
+            edges_string = "partner1:partner2\toccupancy\tendurance_time\n\n"
+            edges_string += "\n".join(['{}\t{:.1f}\t{}'.format(key, 
+                                      res.mean()*100, 
                                       end_times[key]) for key, res in self.analysis.filtered_results.items()])
     
         if self._analysis_parameter['check_angle']: angle_string = "{}".format(self._analysis_parameter['cut_angle'])
@@ -528,7 +535,7 @@ included all nitrogen: {}\n\
 included all sulphur: {}\n\
 backbone atoms: {}\n\
 disulphide bridges: {}\n\
-frames: from {} to {} with step {}\n\
+frames: from {} to {} with step {}, resulting in {} frames\n\
 H bond distance: {}\n\
 H bond angle: {}\n\n\
 - Algorithm -\n\n\
@@ -554,6 +561,7 @@ starting n-terminal residue: {}\n\n\
                                             self._analysis_parameter['start'],
                                             stop,
                                             self._analysis_parameter['step'],
+                                            self.analysis.nb_frames,
                                             self._analysis_parameter['distance'],
                                             angle_string,
                                             algorithm_string,
@@ -602,7 +610,7 @@ starting n-terminal residue: {}\n\n\
     
     def _load_plugins(self):
         dir_path = os.path.dirname(os.path.realpath(__file__))
-        for file in os.listdir(dir_path+'/plugins'):
+        for file in sorted(os.listdir(dir_path+'/plugins')):
             if file.endswith(".py"):
                 plugin_name = file[:-3]
                 try:
@@ -803,15 +811,17 @@ starting n-terminal residue: {}\n\n\
         self.comboBox_filter_segnb.clear()
         self.comboBox_filter_resna.clear()
         self.comboBox_filter_resnb.clear()
-        self.comboBox_filter_segna.addItems(['segname']+sorted(segnames))
-        self.comboBox_filter_segnb.addItems(['segname']+sorted(segnames))
-        self.comboBox_filter_resna.addItems(['resname']+sorted(resnames))
-        self.comboBox_filter_resnb.addItems(['resname']+sorted(resnames))
+        self.comboBox_filter_segna.addItems(['all']+sorted(segnames))
+        self.comboBox_filter_segnb.addItems(['all']+sorted(segnames))
+        self.comboBox_filter_resna.addItems(['all']+sorted(resnames))
+        self.comboBox_filter_resnb.addItems(['all']+sorted(resnames))
         
         self.activate_plugin()
         self.interactive_graph.set_colors()
         self._set_enabled()
-        self.repaint()        
+        self.repaint()
+        self.working = False
+        
     
     def edge_labels_occupancy(self):
         self.checkBox_bonds_endurance.setChecked(False)
@@ -910,7 +920,7 @@ starting n-terminal residue: {}\n\n\
             self.comboBox_filter_segna.setCurrentIndex(0)
             self._connect_between_comboboxes()
             self.groupBox_between_segments.setChecked(False)
-        elif not self.groupBox_between_segments.isChecked() and ('between' not in self._active_filters): 
+        elif ('between' not in self._active_filters): 
             self.line_bonds_filter_resida.setText('')
             self.line_bonds_filter_residb.setText('')
             self._disconnect_between_comboboxes()
@@ -1011,8 +1021,8 @@ starting n-terminal residue: {}\n\n\
                     Error('Type Error!', "Could not convert '{}' into a floating point number.".format(self.line_bonds_occupancy.text()))
                     if ('occupancy' in self._active_filters): del self._active_filters['occupancy']
                     return
-                if not (0.0<=occupancy<=1.0):
-                    Error('Value Error!', "The normalized occupancy has to be a floating point number in [0.0, 1.0].")
+                if not (0.0<=occupancy<=100.0):
+                    Error('Value Error!', "The occupancy has to be a floating point number in [0.0, 100.0].")
                     if ('occupancy' in self._active_filters): del self._active_filters['occupancy']
                     return
                 self._active_filters['occupancy'] = occupancy
@@ -1131,19 +1141,20 @@ starting n-terminal residue: {}\n\n\
     def process_between_segments(self):
         if self.groupBox_between_segments.isChecked(): 
             sega = self.comboBox_filter_segna.currentText()
-            if sega == 'segname': sega = None
+            if sega == 'all': sega = None
             segb = self.comboBox_filter_segnb.currentText()
-            if segb == 'segname': segb = None
+            if segb == 'all': segb = None
             
             resa = self.comboBox_filter_resna.currentText()
-            if resa == 'resname': resa = None
+            if resa == 'all': resa = None
             resb = self.comboBox_filter_resnb.currentText()
-            if resb == 'resname': resb = None
+            if resb == 'all': resb = None
             
             ida = self.line_bonds_filter_resida.text()
             if ida == '': ida = None
             idb = self.line_bonds_filter_residb.text()
             if idb == '': idb = None
+                
             numbers_a = None
             numbers_b = None
             if ida is not None:
@@ -1152,27 +1163,33 @@ starting n-terminal residue: {}\n\n\
                     Error('Format Error!', 'Could not understand the input for residue ids of segment 1. Please define ranges like 10-20 and single numbers and separate them with commas.')
                     if ('between' in self._active_filters): del self._active_filters['between']
                     return
-                if idb is not None:
-                    numbers_b = ranges_to_numbers(idb)
-                    if numbers_b == []: 
-                        Error('Format Error!', 'Could not understand the input for residue ids of segment 2. Please define ranges like 10-20 and single numbers and separate them with commas.')
-                        if ('between' in self._active_filters): del self._active_filters['between']
-                        return
+            if idb is not None:
+                numbers_b = ranges_to_numbers(idb)
+                if numbers_b == []: 
+                    Error('Format Error!', 'Could not understand the input for residue ids of segment 2. Please define ranges like 10-20 and single numbers and separate them with commas.')
+                    if ('between' in self._active_filters): del self._active_filters['between']
+                    return
             
-            if ida is None and idb is not None: 
-                Error('Format Error!', 'Please specify residue ids for segment 1.')
-                if ('between' in self._active_filters): del self._active_filters['between']
-                return
+            #if ida is None and idb is not None: 
+                #Error('Format Error!', 'Please specify residue ids for segment 1.')
+                #if ('between' in self._active_filters): 
+                #    del self._active_filters['between']
+                #    self.check_filters()
+                #return
                     
-            if resa is None and resb is not None: 
-                Error('Format Error!', 'Please specify resnames for segment 1.')
-                if ('between' in self._active_filters): del self._active_filters['between']
-                return
+            #if resa is None and resb is not None: 
+                #Error('Format Error!', 'Please specify resnames for segment 1.')
+                #if ('between' in self._active_filters): 
+                #    del self._active_filters['between']
+                #    self.check_filters()
+                #return
                     
-            if sega is None and segb is not None: 
-                Error('Format Error!', 'Please specify segnames for segment 1.')
-                if ('between' in self._active_filters): del self._active_filters['between']
-                return
+            #if sega is None and segb is not None: 
+                #Error('Format Error!', 'Please specify segnames for segment 1.')
+                #if ('between' in self._active_filters): 
+                #    del self._active_filters['between']
+                #    self.check_filters()
+                #return
             
             self._active_filters['between'] = (sega, segb, resa, resb, ida, idb)
             
@@ -1241,13 +1258,13 @@ starting n-terminal residue: {}\n\n\
             
             if self.groupBox_between_segments.isChecked() and active_filter=='between':
                 sega, segb, resa, resb, numbersa, numbersb = self._active_filters['between']
-                if sega is not None:
+                if sega is not None or segb is not None:
                     self.analysis.filter_between_segnames(sega, segb, use_filtered)
                     use_filtered = True
-                if resa is not None:
+                if resa is not None or resb is not None:
                     self.analysis.filter_between_resnames(resa, resb, use_filtered)
                     use_filtered = True
-                if numbersa is not None:
+                if numbersa is not None or numbersb is not None:
                     numbersa = ranges_to_numbers(numbersa)
                     if numbersb is not None: numbersb = ranges_to_numbers(numbersb)
                     self.analysis.filter_between_resids(numbersa, numbersb, use_filtered)

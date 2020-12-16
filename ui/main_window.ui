@@ -757,8 +757,8 @@
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>458</width>
-         <height>636</height>
+         <width>520</width>
+         <height>773</height>
         </rect>
        </property>
        <attribute name="label">
@@ -838,7 +838,7 @@
         <item>
          <widget class="QGroupBox" name="groupBox_occupancy">
           <property name="title">
-           <string>Normalized Occupancy</string>
+           <string>Occupancy</string>
           </property>
           <property name="checkable">
            <bool>true</bool>

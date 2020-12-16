@@ -31,6 +31,7 @@ from . import helpfunctions as _hf
 import numpy as _np
 import networkx as _nx
 import MDAnalysis as _MDAnalysis
+from copy import deepcopy
 
 class NetworkAnalysis:
     
@@ -131,7 +132,7 @@ class NetworkAnalysis:
         if use_filtered: results = self.filtered_results
         else: results = self.initial_results
         if len(results) == 0: raise AssertionError('nothing to filter!')
-        filtered_result = {key:results[key] for key in results if _np.mean(results[key])>min_occupancy}
+        filtered_result = {key:results[key] for key in results if _np.mean(results[key])>(min_occupancy/100)}
         self.filtered_results = filtered_result
         self._generate_filtered_graph_from_filtered_results()
     
@@ -176,36 +177,42 @@ class NetworkAnalysis:
         self.filtered_graph = graph.edge_subgraph(keep_edges)
         self._generate_filtered_results_from_filtered_graph()
     
-    def filter_between_segnames(self, segna, segnb=None, use_filtered=True):
+    def filter_between_segnames(self, msegna, msegnb=None, use_filtered=True):
+        segna, segnb = deepcopy(msegna), deepcopy(msegnb)
         if use_filtered: results = self.filtered_results
         else: results = self.initial_results
         if len(results) == 0: raise AssertionError('nothing to filter!')
+        if (segna is None) and (segnb is not None): segna, segnb = segnb, segna
         segnames = [segna, segnb]
         keep_bonds = []
         for key in results:
             sa,_,_, sb,_,_ = _hf.deconst_key(key, self.residuewise)
-            if ((sa in segnames) and (sb in segnames) and (sa!=sb) and (segnb!=None)) or (_np.logical_or((sa in segnames),(sb in segnames)) and (segnb==None)):
+            if ((sa in segnames) and (sb in segnames) and (sa!=sb) and (segnb!=None)) or (_np.logical_or((sa in segnames),(sb in segnames)) and (segnb==None)) or ((sa in segnames) and (sb in segnames) and (sa==sb) and (segnb==segna)):
                 keep_bonds.append(key)
         self.filtered_results = {key:results[key] for key in keep_bonds}
         self._generate_filtered_graph_from_filtered_results()
         
-    def filter_between_resnames(self, resna, resnb=None, use_filtered=True):
+    def filter_between_resnames(self, mresna, mresnb=None, use_filtered=True):
+        resna, resnb = deepcopy(mresna), deepcopy(mresnb)
         if use_filtered: results = self.filtered_results
         else: results = self.initial_results
         if len(results) == 0: raise AssertionError('nothing to filter!')
+        if (resna is None) and (resnb is not None): resna, resnb = resnb, resna
         resnames = [resna, resnb]
         keep_bonds = []
         for key in results:
             _,ra,_, _,rb,_ = _hf.deconst_key(key, self.residuewise)
-            if ((ra in resnames) and (rb in resnames) and (ra!=rb) and (resnb!=None)) or (_np.logical_or((ra in resnames),(rb in resnames)) and (resnb==None)):
+            if ((ra in resnames) and (rb in resnames) and (ra!=rb) and (resnb!=None)) or (_np.logical_or((ra in resnames),(rb in resnames)) and (resnb==None)) or ((ra in resnames) and (rb in resnames) and (ra==rb) and (resnb==resnb)):
                 keep_bonds.append(key)
         self.filtered_results = {key:results[key] for key in keep_bonds}
         self._generate_filtered_graph_from_filtered_results()
         
-    def filter_between_resids(self, resida, residb=None, use_filtered=True):
+    def filter_between_resids(self, mresida, mresidb=None, use_filtered=True):
+        resida, residb = deepcopy(mresida), deepcopy(mresidb)
         if use_filtered: results = self.filtered_results
         else: results = self.initial_results
         if len(results) == 0: raise AssertionError('nothing to filter!')
+        if (resida is None) and (residb is not None): resida, residb = residb, resida
         keep_bonds = []
         for key in results:
             _,_,rida, _,_,ridb = _hf.deconst_key(key, self.residuewise)
@@ -244,7 +251,7 @@ class NetworkAnalysis:
             elif centrality_type == 'degree': 
                 centrality_i = _nx.degree_centrality(g_i)
                 normalization_factor = len(centrality_i)
-                centrality_i = {key:int(round(value*normalization_factor)) for key, value in centrality_i.items()}
+                centrality_i = {key:value*normalization_factor for key, value in centrality_i.items()}
             elif centrality_type == 'biological': 
                 centrality_i, normalization_factor = _hf.biological_centrality(g_i)
             else: 
@@ -255,8 +262,8 @@ class NetworkAnalysis:
                 centralities_normalized[node][i] = centrality_normalized_i[node]
             if self.progress_callback is not None: self.progress_callback.emit('Computing {} centrality in frame {}/{}'.format(centrality_type, i+1, self.nb_frames))
         for node in centralities: 
-            centralities[node] = _np.round(centralities[node].mean(),3)
-            centralities_normalized[node] = _np.round(centralities_normalized[node].mean(),3)
+            centralities[node] = _hf.round_to_1(centralities[node].mean())
+            centralities_normalized[node] = _hf.round_to_1(centralities_normalized[node].mean())
         return centralities, centralities_normalized
     
     def _reload_universe(self):
@@ -299,7 +306,7 @@ class NetworkAnalysis:
 
     def get_occupancies(self, as_labels=False):
         occupancies = {key:_np.mean(self.initial_results[key]) for key in self.initial_results}
-        if as_labels: occupancies = {key:str(_np.round(value*100, 1)) for key, value in occupancies.items()}
+        if as_labels: occupancies = {key:str(round(value*100)) for key, value in occupancies.items()}
         return occupancies
 
     def set_centralities(self):

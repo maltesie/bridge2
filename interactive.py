@@ -114,7 +114,7 @@ class InteractiveMPLGraph:
             
         
         self.fig.tight_layout()
-        self.cax = self.fig.add_axes([0.75, 0.1, 0.2, 0.01])
+        self.cax = self.fig.add_axes([0.73, 0.1, 0.2, 0.01])
         self.cax.axis('off')
         
         self._cidpress = self.fig.canvas.mpl_connect(
@@ -298,7 +298,7 @@ class InteractiveMPLGraph:
                 rem_nodes.append(node)
                 node_handle.set_linewidth(1.0)
                 node_handle.set_edgecolor(self._node[node]['color'])
-            node_handle.set_linewidth(3.0)
+            node_handle.set_linewidth(2.0)
             node_handle.set_edgecolor('black')
         for node in rem_nodes: self.selected_nodes.remove(node)
     
@@ -309,7 +309,7 @@ class InteractiveMPLGraph:
             edge_handle.set_edgecolor(edge_data['color'])
         self.canvas.draw_idle()
 
-    def set_subgraph(self, draw=True):
+    def set_subgraph(self, **kwargs):
         subgraph = self._analysis.filtered_graph
         node_labels_active = self._parent.checkBox_bonds_graph_labels.isChecked()
         for node in self._node:
@@ -337,11 +337,11 @@ class InteractiveMPLGraph:
                     edge_label.set_visible(False)
                     edge_data['active'] = False
         self.set_edge_labels(draw=False)
-        if draw: self.canvas.draw_idle()
+        if ('draw' not in kwargs) or kwargs['draw']: self.canvas.draw_idle()
             
-    def set_colors(self, draw=True):
-        
-        if self.ax.get_legend() is not None: self.ax.get_legend().remove()
+    def set_colors(self, **kwargs):
+        if self.ax.get_legend() is not None: 
+            self.ax.get_legend().remove()
         if self.cax is not None:
             self.cax.clear()
             self.cax.axis('off')
@@ -375,6 +375,7 @@ class InteractiveMPLGraph:
             elif self._parent.radioButton_unique_shortest.isChecked(): centralities = self._analysis.centralities['biological'][avg_type][norm_type]
             
             max_centrality = sorted(centralities.values())[-1]
+            if self._parent.radioButton_degree.isChecked() and (not (avg_type or norm_type)): max_centrality = round(max_centrality)
             cmap = plt.get_cmap('jet')
             for node in centralities:
                 centrality_value = centralities[node]
@@ -383,7 +384,7 @@ class InteractiveMPLGraph:
                 sm = plt.cm.ScalarMappable(cmap=cmap)
                 sm.set_array([0.0, max_centrality])
                 plt.colorbar(sm, cax=self.cax, ticks=[0, max_centrality], orientation='horizontal')
-                self.cax.set_xticklabels(np.round([0, max_centrality], 2).astype(str))
+                self.cax.set_xticklabels([str(0), str(max_centrality)])
                 self.cax.axis('on')
         
         for node in self._node:
@@ -391,10 +392,9 @@ class InteractiveMPLGraph:
             color = self._node[node]['color']
             node_handle.set_facecolor(color)
             node_handle.set_edgecolor(color)
-        
-        if draw: self.canvas.draw_idle()
+        if ('draw' not in kwargs) or kwargs['draw']: self.canvas.draw_idle()
     
-    def set_node_positions(self, draw=True):
+    def set_node_positions(self, **kwargs):
         projection = 'PCA'
         if self._parent.radioButton_rotation_xy.isChecked(): projection = 'XY'
         elif self._parent.radioButton_rotation_zy.isChecked(): projection = 'ZY'
@@ -428,9 +428,9 @@ class InteractiveMPLGraph:
             
         self.ax.set_xlim(minx-xmargin, maxx+xmargin)
         self.ax.set_ylim(miny-ymargin, maxy+ymargin)
-        if draw: self.canvas.draw_idle()
+        if ('draw' not in kwargs): self.canvas.draw_idle()
     
-    def set_nodesize(self, draw=True):
+    def set_nodesize(self, **kwargs):
         for node in self._node:
             offset = self._default_size['node'][0]/2
             size = offset + 2/(self._default_size['node'][0]) * (self._parent.horizontalSlider_nodes.value()/100*self._default_size['node'][0])**2
@@ -440,33 +440,33 @@ class InteractiveMPLGraph:
             size = offset + self._parent.horizontalSlider_nodes.value()/100*self._default_size['node'][1]
             label_handle = self._node[node]['label']
             label_handle.set_size(size)
-        if draw: self.canvas.draw_idle()
+        if ('draw' not in kwargs) or kwargs['draw']: self.canvas.draw_idle()
         
-    def set_edgesize(self, draw=True):
+    def set_edgesize(self, **kwargs):
         for node, other_node, edge_data in self.edges():
             offset = self._default_size['edge'] / 2
             size = offset + self._default_size['edge'] * (self._parent.horizontalSlider_edges.value()/100)
             edge_data['handle'].set_linewidth(size)
-        if draw: self.canvas.draw_idle()
+        if ('draw' not in kwargs) or kwargs['draw']: self.canvas.draw_idle()
         
-    def set_labelsize(self, draw=True):
+    def set_labelsize(self, **kwargs):
         for node, other_node, edge_data in self.edges():
             offset = self._default_size['label'] / 2
             size = offset + self._default_size['label'] * (self._parent.horizontalSlider_labels.value()/100)
             for typ, label_handle in edge_data['all_labels'].items():
                 label_handle.set_fontsize(size)
-        if draw: self.canvas.draw_idle()
+        if ('draw' not in kwargs) or kwargs['draw']: self.canvas.draw_idle()
     
-    def set_node_labels(self, draw=True):
+    def set_node_labels(self, **kwargs):
         labels_active = self._parent.checkBox_bonds_graph_labels.isChecked()
         for node in self._node:
             show_label = self._node[node]['active']
             label = self._node[node]['label']
             if labels_active and show_label: label.set_visible(True)
             else: label.set_visible(False)
-        if draw: self.canvas.draw_idle()
+        if ('draw' not in kwargs) or kwargs['draw']: self.canvas.draw_idle()
         
-    def set_edge_labels(self, draw=True):
+    def set_edge_labels(self, **kwargs):
         if self._parent.checkBox_bonds_occupancy.isChecked(): active_label_type = 'occupancy'
         elif self._parent.checkBox_bonds_endurance.isChecked(): active_label_type = 'endurance'
         elif self._parent.checkBox_nb_water.isChecked(): active_label_type = 'nb_water'
@@ -480,7 +480,7 @@ class InteractiveMPLGraph:
                     label.set_visible(True)
                 else: 
                     label.set_visible(False)
-        if draw: self.canvas.draw_idle()
+        if ('draw' not in kwargs) or kwargs['draw']: self.canvas.draw_idle()
     
     def get_active_nodes(self):
         return [node for node in self._node if self._node[node]['active']]

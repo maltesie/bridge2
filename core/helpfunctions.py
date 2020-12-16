@@ -611,4 +611,10 @@ def adjust_water_positions(graph, pos):
             new_pos[node] = temp_pos[0] + 3.5 * (new_pos[node] - temp_pos[0]) / np.linalg.norm(new_pos[node] - temp_pos[0]) 
     return new_pos
                 
-                
+def round_to_1(x):
+    if x == 0.:
+        return 0.
+    elif x<1:
+        return round(x, -int(np.floor(np.log10(abs(x)))))
+    else:
+        return np.round(x, 1)

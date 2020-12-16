@@ -70,6 +70,7 @@ def reset_text_color():
 
 def show_motifs():
     reset_text_color()
+    main_window.interactive_graph.reset_selected_nodes()
     for node, other_node, edge_data in main_window.interactive_graph.edges():
         segn1, resn1, reid1, atom1 = split_node(node)
         segn2, resn2, reid2, atom2 = split_node(other_node)
