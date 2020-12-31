@@ -42,7 +42,8 @@ class WireAnalysis(NetworkAnalysis):
                  start=None, stop=None, step=1, residuewise=False, additional_donors=[], 
                  additional_acceptors=[], exclude_donors=[], exclude_acceptors=[], 
                  ions=[], check_angle=True, add_donors_without_hydrogen=False, 
-                 add_all_donor_acceptor=False, progress_callback=None, restore_filename=None):
+                 add_all_donor_acceptor=False, progress_callback=None, 
+                 water_definition=None, restore_filename=None):
         
         super(WireAnalysis, self).__init__(selection=selection, structure=structure, trajectories=trajectories, 
              distance=distance, cut_angle=cut_angle, start=start, stop=stop, step=step, 
@@ -50,7 +51,7 @@ class WireAnalysis(NetworkAnalysis):
              exclude_donors=exclude_donors, exclude_acceptors=exclude_acceptors,
              ions=ions, check_angle=check_angle, add_donors_without_hydrogen=add_donors_without_hydrogen, 
              add_all_donor_acceptor=add_all_donor_acceptor, progress_callback=progress_callback,
-             restore_filename=restore_filename, residuewise=residuewise)
+             restore_filename=restore_filename, residuewise=residuewise, water_definition=water_definition)
         
         if restore_filename != None: return
         if not self._mda_selection:  raise AssertionError('No atoms match the selection')
@@ -218,22 +219,27 @@ class WireAnalysis(NetworkAnalysis):
             local_water_index = []
             [local_water_index.extend(l) for l in water_tree.query_ball_point(selection_coordinates, float(max_water+1)*self.distance/2.)]
             local_water_index = _np.unique(local_water_index)
-            local_water_coordinates = water_coordinates[local_water_index]
-            
-            if water_in_convex_hull:
-                hull = _sp.Delaunay(selection_coordinates)
-                local_water_index_hull = (hull.find_simplex(local_water_coordinates) != -1).nonzero()[0]
-                local_water_coordinates = water_coordinates[local_water_index[local_water_index_hull]]
+            if local_water_index.size>0: 
+                local_water_coordinates = water_coordinates[local_water_index]
                 
-            local_water_tree = _sp.cKDTree(local_water_coordinates)
+                
+                if water_in_convex_hull:
+                    hull = _sp.Delaunay(selection_coordinates)
+                    local_water_index_hull = (hull.find_simplex(local_water_coordinates) != -1).nonzero()[0]
+                    local_water_coordinates = water_coordinates[local_water_index[local_water_index_hull]]
+                    
+                local_water_tree = _sp.cKDTree(local_water_coordinates)
+                
+                local_water_index += self._first_water_id
+                local_pairs = _np.array([(i, local_water_index[j]) for i, bla in enumerate(selection_tree.query_ball_tree(local_water_tree, self.distance)) for j in bla])
+                local_water_index -= self._first_water_id
+                try:
+                    water_pairs = local_water_index[_np.array(list(local_water_tree.query_pairs(self.distance)))]
+                except IndexError:
+                    water_pairs = da_pairs = _np.array([])
+            else:
+                water_pairs = local_pairs = _np.array([])
             
-            local_water_index += self._first_water_id
-            local_pairs = [(i, local_water_index[j]) for i, bla in enumerate(selection_tree.query_ball_tree(local_water_tree, self.distance)) for j in bla]
-            local_water_index -= self._first_water_id
-            try:
-                water_pairs = local_water_index[_np.array(list(local_water_tree.query_pairs(self.distance)))]
-            except IndexError:
-                water_pairs = da_pairs = _np.array([])
             if not no_direct_bonds: 
                 da_pairs = _np.array([[i, j] for i,donors in enumerate(a_tree.query_ball_tree(d_tree, self.distance)) for j in donors])
                 da_pairs[:,0] += self._nb_donors
@@ -246,7 +252,8 @@ class WireAnalysis(NetworkAnalysis):
                 da_hbonds = _hf.check_angle(da_pairs, self.heavy2hydrogen, all_coordinates, hydrogen_coordinates, self.cut_angle)
                 if water_pairs.size > 0: water_hbonds = _hf.check_angle_water(water_pairs, water_coordinates, hydrogen_coordinates[self._first_water_hydrogen_id:], self.cut_angle)
                 else: water_hbonds = _np.array([])
-                local_hbonds = _hf.check_angle(local_pairs, self.heavy2hydrogen, all_coordinates, hydrogen_coordinates, self.cut_angle)
+                if local_pairs.size > 0: local_hbonds = _hf.check_angle(local_pairs, self.heavy2hydrogen, all_coordinates, hydrogen_coordinates, self.cut_angle)
+                else: local_hbonds = _np.array([])
             else:
                 da_hbonds = da_pairs
                 water_hbonds = water_pairs
@@ -254,58 +261,60 @@ class WireAnalysis(NetworkAnalysis):
             
             da_hbonds = _np.sort(da_hbonds)
             water_hbonds = _np.sort(water_hbonds) + self._first_water_id
-            local_hbonds = _np.sort(_np.array(local_hbonds))
-            local_hbonds[:,0]=self.da_trans[local_hbonds[:,0]]
-
-            g = _nx.Graph()
-            g.add_edges_from(water_hbonds)
             
-            residues = _np.unique(local_hbonds[:,0])
-            already_checked=[]
-            for source in residues:
-                already_checked_targets = []
-                source_water_index = local_hbonds[:,0]==source
+            if local_hbonds.size > 0:
+                local_hbonds = _np.sort(_np.array(local_hbonds))
+                local_hbonds[:,0]=self.da_trans[local_hbonds[:,0]]
     
-                if not source_water_index.any(): continue
-    
-                g.add_edges_from(local_hbonds[source_water_index])
-                paths = _nx.single_source_shortest_path(g,source,max_water)
-                g.remove_node(source)
+                g = _nx.Graph()
+                g.add_edges_from(water_hbonds)
                 
-                idx = _np.array([self._all_ids[bl]!=self._all_ids[source] for bl in local_hbonds[:,0]])
-                target_water_set = set(paths) & set(local_hbonds[:,1][idx])
-                twlist = list(target_water_set)
-                
-                all_targets_index = _np.in1d(local_hbonds[:,1], _np.array(twlist))
-                
-                for target, last_water in local_hbonds[all_targets_index]:
-    
-                    if target in already_checked or target in already_checked_targets or self._all_ids[source]==self._all_ids[target]: continue
-                    wire = paths[last_water] + [target]
-                    wire_hash = hash(str(wire))
-                    this_frame_table[wire_hash] = wire
-                    if self.residuewise: wire_info = ':'.join(sorted([self._all_ids[source], self._all_ids[target]]))
-                    else: wire_info = ':'.join(sorted([self._all_ids_atomwise[source], self._all_ids_atomwise[target]]))
-                    water_in_wire = len(wire)-2
+                residues = _np.unique(local_hbonds[:,0])
+                already_checked=[]
+                for source in residues:
+                    already_checked_targets = []
+                    source_water_index = local_hbonds[:,0]==source
+        
+                    if not source_water_index.any(): continue
+        
+                    g.add_edges_from(local_hbonds[source_water_index])
+                    paths = _nx.single_source_shortest_path(g,source,max_water)
+                    g.remove_node(source)
                     
-                    if self.residuewise:
-                        try: water_already_found = results[wire_info][frame_count]
-                        except: water_already_found = _np.inf
-                        if (water_in_wire >= water_already_found): continue    
+                    idx = _np.array([self._all_ids[bl]!=self._all_ids[source] for bl in local_hbonds[:,0]])
+                    target_water_set = set(paths) & set(local_hbonds[:,1][idx])
+                    twlist = list(target_water_set)
+                    
+                    all_targets_index = _np.in1d(local_hbonds[:,1], _np.array(twlist))
+                    
+                    for target, last_water in local_hbonds[all_targets_index]:
+        
+                        if target in already_checked or target in already_checked_targets or self._all_ids[source]==self._all_ids[target]: continue
+                        wire = paths[last_water] + [target]
+                        wire_hash = hash(str(wire))
+                        this_frame_table[wire_hash] = wire
+                        if self.residuewise: wire_info = ':'.join(sorted([self._all_ids[source], self._all_ids[target]]))
+                        else: wire_info = ':'.join(sorted([self._all_ids_atomwise[source], self._all_ids_atomwise[target]]))
+                        water_in_wire = len(wire)-2
                         
-                    try:
-                        results[wire_info][frame_count] = water_in_wire
-                        intervals_results[wire_info][frame_count] = wire_hash
-                    except:
-                        results[wire_info] = _np.ones(frames)*_np.inf
-                        results[wire_info][frame_count] = water_in_wire
-                        intervals_results[wire_info] = _np.arange(frames, dtype=_np.int)
-                        intervals_results[wire_info][frame_count] = wire_hash
-                
-                already_checked.append(source)  
+                        if self.residuewise:
+                            try: water_already_found = results[wire_info][frame_count]
+                            except: water_already_found = _np.inf
+                            if (water_in_wire >= water_already_found): continue    
+                            
+                        try:
+                            results[wire_info][frame_count] = water_in_wire
+                            intervals_results[wire_info][frame_count] = wire_hash
+                        except:
+                            results[wire_info] = _np.ones(frames)*_np.inf
+                            results[wire_info][frame_count] = water_in_wire
+                            intervals_results[wire_info] = _np.arange(frames, dtype=_np.int)
+                            intervals_results[wire_info][frame_count] = wire_hash
+                    
+                    already_checked.append(source)  
             
             if allow_direct_bonds:
-                for a, b in da_hbonds:
+                for source, target in da_hbonds:
                     if self.residuewise: wire_info = ':'.join(sorted([self._all_ids[source], self._all_ids[target]]))
                     else: wire_info = ':'.join(sorted([self._all_ids_atomwise[source], self._all_ids_atomwise[target]]))
                     try:

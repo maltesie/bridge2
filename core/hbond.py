@@ -39,7 +39,8 @@ class HbondAnalysis(NetworkAnalysis):
                  start=None, stop=None, step=1, additional_donors=[], residuewise=False,
                  additional_acceptors=[], exclude_donors=[], exclude_acceptors=[], 
                  ions=[], check_angle=True, add_donors_without_hydrogen=False, 
-                 add_all_donor_acceptor=False, progress_callback=None, restore_filename=None):
+                 add_all_donor_acceptor=False, progress_callback=None, 
+                 water_definition=None, restore_filename=None):
         
         super(HbondAnalysis, self).__init__(selection=selection, structure=structure, trajectories=trajectories, 
              distance=distance, cut_angle=cut_angle, start=start, stop=stop, step=step, 
@@ -47,7 +48,7 @@ class HbondAnalysis(NetworkAnalysis):
              exclude_donors=exclude_donors, exclude_acceptors=exclude_acceptors,
              ions=ions, check_angle=check_angle, add_donors_without_hydrogen=add_donors_without_hydrogen, 
              add_all_donor_acceptor=add_all_donor_acceptor, progress_callback=progress_callback,
-             restore_filename=restore_filename, residuewise=residuewise)
+             restore_filename=restore_filename, residuewise=residuewise, water_definition=water_definition)
         
         if restore_filename is not None: return
         self._i4_distribution = None

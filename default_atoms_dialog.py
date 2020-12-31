@@ -49,6 +49,18 @@ class Ui_Dialog(object):
 
         self.verticalLayout_3.addLayout(self.horizontalLayout_2)
 
+        self.groupBox_3 = QGroupBox(Dialog)
+        self.groupBox_3.setObjectName(u"groupBox_3")
+        self.horizontalLayout_3 = QHBoxLayout(self.groupBox_3)
+        self.horizontalLayout_3.setObjectName(u"horizontalLayout_3")
+        self.lineEdit_water = QLineEdit(self.groupBox_3)
+        self.lineEdit_water.setObjectName(u"lineEdit_water")
+
+        self.horizontalLayout_3.addWidget(self.lineEdit_water)
+
+
+        self.verticalLayout_3.addWidget(self.groupBox_3)
+
         self.horizontalLayout = QHBoxLayout()
         self.horizontalLayout.setObjectName(u"horizontalLayout")
         self.horizontalSpacer = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
@@ -85,8 +97,9 @@ class Ui_Dialog(object):
 
     def retranslateUi(self, Dialog):
         Dialog.setWindowTitle(QCoreApplication.translate("Dialog", u"Additional Options", None))
-        self.groupBox.setTitle(QCoreApplication.translate("Dialog", u"Acceptor Atoms", None))
-        self.groupBox_2.setTitle(QCoreApplication.translate("Dialog", u"Donor Atoms", None))
+        self.groupBox.setTitle(QCoreApplication.translate("Dialog", u"Acceptor atoms", None))
+        self.groupBox_2.setTitle(QCoreApplication.translate("Dialog", u"Donor atoms", None))
+        self.groupBox_3.setTitle(QCoreApplication.translate("Dialog", u"Water oxygen atoms ", None))
         self.pushButton_cancel.setText(QCoreApplication.translate("Dialog", u"Cancel", None))
         self.pushButton_reset.setText(QCoreApplication.translate("Dialog", u"Reset", None))
         self.pushButton_save.setText(QCoreApplication.translate("Dialog", u"Save", None))

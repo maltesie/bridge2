@@ -14,7 +14,8 @@ import numpy as np
 from core import HbondAnalysis, WireAnalysis, HydrophobicAnalysis
 from interactive import InteractiveMPLGraph as igraph, default_colors
 from core.helpfunctions import (Error, Info, ranges_to_numbers, 
-                                acceptor_names_global, donor_names_global)
+                                acceptor_names_global, donor_names_global,
+                                water_definition)
 
 all_filter = ['occupancy', 'shortest', 'connected', 'specific', 'between', 'selected_nodes']
 filter_description = {'occupancy': 'Occupancy', 
@@ -47,23 +48,32 @@ class DefaultAtomsDialog(QDialog, Ui_DefaultAtomsDialog):
             with open(ini_file, 'r') as f:
                 donors = f.readline()
                 acceptors = f.readline()
+                water_def = f.readline()
         else:
             donors = ', '.join(donor_names_global)
             acceptors = ', '.join(acceptor_names_global)
+            water_def = water_definition
         self.plainTextEdit_donors.clear()
         self.plainTextEdit_acceptors.clear()
         self.plainTextEdit_donors.setPlainText(donors)
         self.plainTextEdit_acceptors.setPlainText(acceptors)
+        self.lineEdit_water.clear()
+        self.lineEdit_water.setText(water_def)
         self.default_donors = {donor.strip() for donor in donors.split(',')}
         self.default_acceptors = {acceptor.strip() for acceptor in acceptors.split(',')}
+        self.default_water = water_def
         
     def save(self):
         dir_path = os.path.dirname(os.path.realpath(__file__))
         ini_file = dir_path + '/atom_names.ini'
         donors = self.plainTextEdit_donors.toPlainText().strip().replace('\n', ' ')
         acceptors = self.plainTextEdit_acceptors.toPlainText().replace('\n', ' ')
+        water_def = self.lineEdit_water.text()
+        self.default_donors = {donor.strip() for donor in donors.split(',')}
+        self.default_acceptors = {acceptor.strip() for acceptor in acceptors.split(',')}
+        self.default_water = water_def
         with open(ini_file, 'w') as f:
-            f.write(donors + '\n' + acceptors)
+            f.write(donors + '\n' + acceptors + '\n' + water_def)
         self.close()
             
     def cancel(self):
@@ -72,8 +82,10 @@ class DefaultAtomsDialog(QDialog, Ui_DefaultAtomsDialog):
     def reset(self):
         donors = donor_names_global
         acceptors = acceptor_names_global
-        self.plainTextEdit_donors.setPlainText(', '.join(donors))
-        self.plainTextEdit_acceptors.setPlainText(', '.join(acceptors))
+        water_def = water_definition
+        self.plainTextEdit_donors.setPlainText(', '.join(sorted(list(donors))))
+        self.plainTextEdit_acceptors.setPlainText(', '.join(sorted(list(acceptors))))
+        self.lineEdit_water.setText(water_def)
 
 class NewAnalysisDialog(QDialog, Ui_NewAnalysisDialog):
     
@@ -176,6 +188,7 @@ class NewAnalysisDialog(QDialog, Ui_NewAnalysisDialog):
         
         add_donors = set(self.main_window.default_atoms_dialog.default_donors)
         add_acceptors = set(self.main_window.default_atoms_dialog.default_acceptors)
+        water_def = self.main_window.default_atoms_dialog.default_water
         if consider_backbone:
             add_donors |= {'N'}
             add_acceptors |= {'O'}
@@ -287,6 +300,7 @@ class NewAnalysisDialog(QDialog, Ui_NewAnalysisDialog):
             'residuewise':residuewise,
             'additional_donors':add_donors, 
             'additional_acceptors':add_acceptors,
+            'water_definition':water_def,
             'add_all_donor_acceptor':add_all_donor_acceptor,
             'add_donors_without_hydrogen':crytal_structure
             }
@@ -310,6 +324,7 @@ class NewAnalysisDialog(QDialog, Ui_NewAnalysisDialog):
         message = str(error_tuple[1]) +'\n'+ str(error_tuple[2])
         Error(message)
         self.main_window.statusbar.showMessage('Failed Initialization!')
+        self.main_window.working = False
     
     def compute_initial_state(self, **kwargs):
         hb_selection = self.radio_in_selection.isChecked()
@@ -498,11 +513,13 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         end_times = self.analysis.get_endurance_times()
         if self._analysis_type == 'ww':
             average_water = {key: res[res!=np.inf].mean() for key, res in self.analysis.wire_lengths.items()}
+            sd_water = {key: res[res!=np.inf].std() for key, res in self.analysis.wire_lengths.items()}
             edges_string = "partner1:partner2\toccupancy\tendurance_time\tavg_nb_water\n\n"
-            edges_string += "\n".join(['{}\t{:.1f}\t{}\t{:.1f}'.format(key, 
+            edges_string += "\n".join(['{}\t{:.1f}\t{}\t{:.1f}+-{:.1f}'.format(key, 
                                       res.mean()*100, 
                                       end_times[key],
-                                      average_water[key]) for key, res in self.analysis.filtered_results.items()])
+                                      average_water[key],
+                                      sd_water[key]) for key, res in self.analysis.filtered_results.items()])
         else:
             edges_string = "partner1:partner2\toccupancy\tendurance_time\n\n"
             edges_string += "\n".join(['{}\t{:.1f}\t{}'.format(key, 
@@ -752,7 +769,7 @@ starting n-terminal residue: {}\n\n\
     def init_interactive_graph(self):
         self.statusbar.showMessage('Done!')
         self.statusbar.repaint()
-        
+        self.working = False
         if self.interactive_graph is not None:
             self.buttonGroup_coloring.buttonClicked.disconnect(self.interactive_graph.set_colors)
             self.checkBox_centralities_norm.clicked.disconnect(self.interactive_graph.set_colors)
@@ -820,7 +837,7 @@ starting n-terminal residue: {}\n\n\
         self.interactive_graph.set_colors()
         self._set_enabled()
         self.repaint()
-        self.working = False
+        
         
     
     def edge_labels_occupancy(self):

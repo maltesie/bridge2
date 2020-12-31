@@ -38,7 +38,7 @@ from PySide2.QtWidgets import QMessageBox
 r_covalent = defaultdict(lambda: 1.5, N=1.31, O=1.31, P=1.58, S=1.55)
 donor_names_global = {'OH2', 'OW', 'NE', 'NH1', 'NH2', 'ND2', 'SG', 'NE2', 'ND1', 'NZ', 'OG', 'OG1', 'NE1', 'OH', 'OE1', 'OE2', 'N16', 'OD1', 'OD2'}
 acceptor_names_global = {'OH2', 'OW', 'OD1', 'OD2', 'SG', 'OE1', 'OE2', 'ND1', 'NE2', 'SD', 'OG', 'OG1', 'OH'}
-aa_three2one = {'CYS': 'C', 'ASP': 'D', 'SER': 'S', 'GLN': 'Q', 'LYS': 'K', 'ILE': 'I', 'PRO': 'P', 'THR': 'T', 'PHE': 'F', 'ASN': 'N', 'GLY': 'G', 'HIS': 'H', 'LEU': 'L', 'ARG': 'R', 'TRP': 'W', 'ALA': 'A', 'VAL':'V', 'GLU': 'E', 'TYR': 'Y', 'MET': 'M', 'TIP3': 'O', 'HOH':'O', 'LYR':'RET', 'HSE':'HE', 'HSD':'HD', 'HSP':'HP'}
+aa_three2one = {'CYS': 'C', 'ASP': 'D', 'SER': 'S', 'GLN': 'Q', 'LYS': 'K', 'ILE': 'I', 'PRO': 'P', 'THR': 'T', 'PHE': 'F', 'ASN': 'N', 'GLY': 'G', 'HIS': 'H', 'LEU': 'L', 'ARG': 'R', 'TRP': 'W', 'ALA': 'A', 'VAL':'V', 'GLU': 'E', 'TYR': 'Y', 'MET': 'M', 'TIP3': 'O', 'HOH':'O', 'LYR':'RET', 'HSE':'H', 'HSD':'H', 'HSP':'H'}
 water_definition = '(resname TIP3 and name OH2) or (resname HOH and name O)'
 
 class Error(QMessageBox):

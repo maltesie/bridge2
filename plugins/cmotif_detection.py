@@ -181,9 +181,8 @@ class Ui_GroupBox(object):
         self.groupBox.setTitle(QCoreApplication.translate("GroupBox", u"Detect motif", None))
         self.checkBox_asp_ser.setText(QCoreApplication.translate("GroupBox", u"Asp/Glu carboxylate oxygen - Ser/Thr hydroxyl oxygen", None))
         self.checkBox_ser_backbone.setText(QCoreApplication.translate("GroupBox", u"Ser-Thr  hydroxyl oxygen - backbone carbonyl oxygen", None))
-        self.checkBox_glu_his.setText(QCoreApplication.translate("GroupBox", u"Asp/Glu carboxylate oxygen - His/Hse/Hsd ND1 or NE2", None))
-        self.checkBox_his_his.setText(QCoreApplication.translate("GroupBox", u"His/Hse/Hsd ND1 or NE2 - His/Hse/Hsd ND1 or NE2", None))
+        self.checkBox_glu_his.setText(QCoreApplication.translate("GroupBox", u"Asp/Glu carboxylate oxygen - His ND1 or NE2", None))
+        self.checkBox_his_his.setText(QCoreApplication.translate("GroupBox", u"His ND1 or NE2 - His ND1 or NE2", None))
         self.checkBox_asp_asn.setText(QCoreApplication.translate("GroupBox", u"Asp/Glu carboxylate oxygen - Asn ND1 or OD2", None))
-        self.checkBox_his_ser.setText(QCoreApplication.translate("GroupBox", u"His/Hse/Hsd ND1 or NE2 - Ser/Thr hydroxyl oxygen", None))
+        self.checkBox_his_ser.setText(QCoreApplication.translate("GroupBox", u"His ND1 or NE2 - Ser/Thr hydroxyl oxygen", None))
     # retranslateUi
-

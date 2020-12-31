@@ -39,7 +39,8 @@ class NetworkAnalysis:
                  start=None, stop=None, step=1, residuewise=False, additional_donors=[], 
                  additional_acceptors=[], exclude_donors=[], exclude_acceptors=[], 
                  ions=[], check_angle=True, add_donors_without_hydrogen=False, 
-                 add_all_donor_acceptor=False, progress_callback=None, restore_filename=None):
+                 add_all_donor_acceptor=False, progress_callback=None, 
+                 water_definition=None, restore_filename=None):
         
         
         if restore_filename != None: return
@@ -57,7 +58,9 @@ class NetworkAnalysis:
         self._mda_selection = self._universe.select_atoms(selection)
         if not self._mda_selection:  raise AssertionError('No atoms match the selection')
         #t2 = time.time()
-        self._water = self._universe.select_atoms(_hf.water_definition)
+        if water_definition is not None: self.water_definition = water_definition
+        else: self.water_definition = _hf.water_definition
+        self._water = self._universe.select_atoms(self.water_definition)
         #t7 = time.time()
         self._water_ids = _hf.MDA_info_list(self._water, detailed_info=False)
         self._water_ids_atomwise = _hf.MDA_info_list(self._water, detailed_info=True)
