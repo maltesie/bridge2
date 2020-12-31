@@ -52,7 +52,7 @@ def is_ser_thr(res, atom):
     return ((res in ['THR', 'SER']) and (atom.startswith('O') and (len(atom)>1)))
 
 def is_his(res, atom):
-    return ((res in ['HIS', 'HSD', 'HSE']) and (atom in ['ND1', 'NE2']))
+    return ((res in ['HIS', 'HSD', 'HSE', 'HSP']) and (atom in ['ND1', 'NE2']))
 
 def is_asn(res, atom):
     return ((res == 'ASN') and (atom in ['ND1', 'OD2']))

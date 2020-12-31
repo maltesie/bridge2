@@ -340,7 +340,7 @@ class NetworkAnalysis:
         else: all_id = _np.array(self._all_ids_atomwise)
         if not include_water: all_id = all_id[:self._first_water_id]
         for in_frame in range(self.nb_frames):  
-            if self.progress_callback is not None: self.progress_callback.emit('Extracting positional infromation from frame {}/{}'.format(in_frame, self.nb_frames))
+            if self.progress_callback is not None: self.progress_callback.emit('Extracting positional information from frame {}/{}'.format(in_frame, self.nb_frames))
             self._universe.trajectory[in_frame]
             if include_water: all_coordinates = _np.vstack((self._da_selection.positions, self._water.positions.reshape((-1,3))))
             else: all_coordinates = _np.array(self._da_selection.positions)

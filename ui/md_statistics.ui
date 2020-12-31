@@ -377,7 +377,7 @@
    <item>
     <widget class="QGroupBox" name="groupBox_joint_occupancy">
      <property name="title">
-      <string>Joint Ouccupancy</string>
+      <string>Joint Occupancy</string>
      </property>
      <layout class="QVBoxLayout" name="verticalLayout_4">
       <item>
