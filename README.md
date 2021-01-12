@@ -63,10 +63,10 @@ Then run the setup script that comes with bridge:
 > ./setup
 
 This will create a python virtual environment containing all the necessary packages.
-You can now run bridge using the following command:
+You can now run Bridge2 using the following command:
 
 > ./bridge
 
-If you install a new version of Bridge, delete your old installation folder, unpack the new
-archive and run ./setup once again to set the new version up. After that start Bridge with 
+If you install a new version of Bridge2, delete your old installation folder, unpack the new
+archive and run ./setup once again to set the new version up. After that start Bridge2 with 
 ./bridge
