@@ -48,8 +48,7 @@ install Homebrew by running the following command in a terminal:
 
 > /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"
 
-To set up a virtual python environment with the necessary packages installed, cd into the directory 
-you want to have the environment installed in. Then install the prerequisites:
+Then install the prerequisites:
 
 > xcode-select --install
 
