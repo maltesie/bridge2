@@ -1,4 +1,4 @@
-## Copyright Notice and Disclaimer
+## Copyright notice and disclaimer
 
 This program is free software: you can redistribute it and/or modify it under the terms of
 the GNU General Public License as published by the Free Software Foundation, either
@@ -25,7 +25,7 @@ Federico Guerra, Malte Siemers, Christopher Mielack, and Ana-Nicoleta Bondar Dyn
 Long-Distance Hydrogen-Bond Networks in Photosystem II The Journal of Physical
 Chemistry B 2018 122 (17), 4625-4641
 
-## Installation Guide
+## Installation guide
 
 This is a standalone version of Bridge2. It is written in Python3 and Qt5 and depends on Qt5
 (5.14.1+) and the python packages MDAnalysis (0.19.2+) and PySide2 (5.14.1+).
@@ -34,11 +34,13 @@ To set up a virtual python environment with those packages installed, open up a 
 and cd into the directory you want to have the environment installed in. Then install the
 prerequisites:
 
-### Ubuntu Linux Dependencies
+
+### Ubuntu Linux dependencies
 
 > sudo apt-get install qt5-default build-essential python3-dev python3-venv
 
-### macOS
+
+### macOS dependencies
 
 In order to install the required software for Bridge2 to work, we recommend using the 
 Homebrew package manager. The later commands assume it is installed on your system. You can
@@ -53,7 +55,8 @@ you want to have the environment installed in. Then install the prerequisites:
 
 > brew install qt5 python
 
-### Setup Bridge2
+
+### Setup and run Bridge2
 
 Then run the setup script that comes with bridge:
 
