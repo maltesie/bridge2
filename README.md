@@ -39,24 +39,18 @@ prerequisites:
 
 > sudo apt-get install qt5-default build-essential python3-dev python3-venv
 
-Then run (name_of_your_env will be the name of the folder of the virtual environment):
+Then run the setup script that comes with bridge:
 
-> python3 -m venv name_of_your_env
+> ./setup
 
-You can now activate your environment by typing
+This will create a python virtual environment containing all the necessary packages.
+You can now run bridge using the following command:
 
-> source path_to_your_env/bin/activate
+> ./bridge
 
-The environment has to be activated every time you open a new terminal. It is possible to
-automatically activate the environment by editing your ~/.bashrc file. Just add the line
-above at the end of it. After activating the environment (the name of the environment is
-displayed in front of your terminals input line), install the required python packages:
-
-> pip install wheel mdanalysis pyside2
-
-Now unzip the archive containing bridge and cd into the extracted directory. Run bridge with
+If you install a new version of Bridge, delete your old installation folder, unpack the new
+archive and run ./setup once again to set the new version up. After that start Bridge with 
 ./bridge
-
 
 ### macOS
 
@@ -72,21 +66,15 @@ you want to have the environment installed in. Then install the prerequisites:
 > xcode-select --install
 > brew install qt5 python
 
-Then run (name_of_your_env will be the name of the folder of the virtual environment):
+Then run the setup script that comes with bridge:
 
-> python3 -m venv name_of_your_env
+> ./setup
 
-You can now activate your environment by typing
-
-> source path_to_your_env/bin/activate
-
-The environment has to be activated every time you open a new terminal. It is possible to
-automatically activate the environment by editing your ~/.bashrc file. Just add the line
-above at the end of it. After activating the environment, install the required python
-packages
-
-> pip3 install wheel mdanalysis pyside2
-
-Now unzip the archive containing bridge and cd into the extracted directory. Run bridge with
+This will create a python virtual environment containing all the necessary packages.
+You can now run bridge using the following command:
 
 > ./bridge
+
+If you install a new version of Bridge, delete your old installation folder, unpack the new
+archive and run ./setup once again to set the new version up. After that start Bridge with 
+./bridge
