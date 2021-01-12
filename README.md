@@ -63,10 +63,9 @@ install Homebrew by running the following command in a terminal:
 To set up a virtual python environment with the necessary packages installed, cd into the directory 
 you want to have the environment installed in. Then install the prerequisites:
 
-´´´
-xcode-select --install
-brew install qt5 python
-´´´
+> xcode-select --install
+
+> brew install qt5 python
 
 Then run the setup script that comes with bridge:
 
