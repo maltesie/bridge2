@@ -27,30 +27,16 @@ Chemistry B 2018 122 (17), 4625-4641
 
 ## Installation Guide
 
-This is a standalone version of Bridge. It is written in Python3 and Qt5 and depends on Qt5
+This is a standalone version of Bridge2. It is written in Python3 and Qt5 and depends on Qt5
 (5.14.1+) and the python packages MDAnalysis (0.19.2+) and PySide2 (5.14.1+).
-
-
-### Ubuntu Linux
 
 To set up a virtual python environment with those packages installed, open up a terminal
 and cd into the directory you want to have the environment installed in. Then install the
 prerequisites:
 
+### Ubuntu Linux Dependencies
+
 > sudo apt-get install qt5-default build-essential python3-dev python3-venv
-
-Then run the setup script that comes with bridge:
-
-> ./setup
-
-This will create a python virtual environment containing all the necessary packages.
-You can now run bridge using the following command:
-
-> ./bridge
-
-If you install a new version of Bridge, delete your old installation folder, unpack the new
-archive and run ./setup once again to set the new version up. After that start Bridge with 
-./bridge
 
 ### macOS
 
@@ -66,6 +52,8 @@ you want to have the environment installed in. Then install the prerequisites:
 > xcode-select --install
 
 > brew install qt5 python
+
+### Setup Bridge2
 
 Then run the setup script that comes with bridge:
 
