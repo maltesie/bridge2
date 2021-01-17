@@ -669,6 +669,13 @@
               </widget>
              </item>
              <item>
+              <widget class="QCheckBox" name="checkBox_white">
+               <property name="text">
+                <string>white background</string>
+               </property>
+              </widget>
+             </item>
+             <item>
               <spacer name="horizontalSpacer_15">
                <property name="orientation">
                 <enum>Qt::Horizontal</enum>
@@ -757,8 +764,8 @@
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>520</width>
-         <height>773</height>
+         <width>458</width>
+         <height>636</height>
         </rect>
        </property>
        <attribute name="label">

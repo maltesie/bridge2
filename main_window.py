@@ -403,6 +403,11 @@ class Ui_MainWindow(object):
 
         self.horizontalLayout_7.addWidget(self.checkBox_bonds_graph_labels)
 
+        self.checkBox_white = QCheckBox(self.groupBox_2)
+        self.checkBox_white.setObjectName(u"checkBox_white")
+
+        self.horizontalLayout_7.addWidget(self.checkBox_white)
+
         self.horizontalSpacer_15 = QSpacerItem(461, 17, QSizePolicy.Expanding, QSizePolicy.Minimum)
 
         self.horizontalLayout_7.addItem(self.horizontalSpacer_15)
@@ -450,7 +455,7 @@ class Ui_MainWindow(object):
         self.toolBox.addItem(self.toolBoxPage_layout, u"Layout")
         self.toolBoxPage_filters = QWidget()
         self.toolBoxPage_filters.setObjectName(u"toolBoxPage_filters")
-        self.toolBoxPage_filters.setGeometry(QRect(0, 0, 520, 773))
+        self.toolBoxPage_filters.setGeometry(QRect(0, 0, 458, 636))
         self.verticalLayout_4 = QVBoxLayout(self.toolBoxPage_filters)
         self.verticalLayout_4.setObjectName(u"verticalLayout_4")
         self.verticalSpacer_6 = QSpacerItem(20, 20, QSizePolicy.Minimum, QSizePolicy.Fixed)
@@ -844,6 +849,7 @@ class Ui_MainWindow(object):
         self.checkBox_bonds_graph_labels.setToolTip(QCoreApplication.translate("MainWindow", u"<html><head/><body><p align=\"justify\">Toggle the use of residue names and numbers as labels.</p></body></html>", None))
 #endif // QT_CONFIG(tooltip)
         self.checkBox_bonds_graph_labels.setText(QCoreApplication.translate("MainWindow", u"residue names", None))
+        self.checkBox_white.setText(QCoreApplication.translate("MainWindow", u"white background", None))
         self.label_5.setText(QCoreApplication.translate("MainWindow", u"edges: ", None))
 #if QT_CONFIG(tooltip)
         self.checkBox_bonds_occupancy.setToolTip(QCoreApplication.translate("MainWindow", u"<html><head/><body><p align=\"justify\">Toggle the use of H bond occupancies as edge labels in the 2D visualization.</p></body></html>", None))

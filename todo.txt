@@ -1,4 +1,0 @@
-motif detection
-hydrophobic 
-
-round values for occupancy

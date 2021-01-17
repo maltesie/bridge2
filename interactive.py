@@ -390,7 +390,8 @@ class InteractiveMPLGraph:
         for node in self._node:
             node_handle = self._node[node]['handle']
             color = self._node[node]['color']
-            node_handle.set_facecolor(color)
+            if not self._parent.checkBox_white.isChecked(): node_handle.set_facecolor(color)
+            else: node_handle.set_facecolor('white')
             node_handle.set_edgecolor(color)
         if ('draw' not in kwargs) or kwargs['draw']: self.canvas.draw_idle()
     
