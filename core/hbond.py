@@ -32,6 +32,7 @@ from . import helpfunctions as _hf
 from .network import NetworkAnalysis
 import numpy as _np
 from scipy import spatial as _sp
+#import time
 
 class HbondAnalysis(NetworkAnalysis):
     
@@ -59,6 +60,7 @@ class HbondAnalysis(NetworkAnalysis):
         frame_count = 0
         frames = self.nb_frames
         result = {}
+        #t0 = time.time()
         for ts in self._universe.trajectory[self._trajectory_slice]:
             selection_coordinates = self._da_selection.positions
             d_tree = _sp.cKDTree(self._donors.positions)
@@ -92,6 +94,7 @@ class HbondAnalysis(NetworkAnalysis):
                     result[bond][frame_count] = True
             frame_count+=1
             if self.progress_callback is not None: self.progress_callback.emit('Computing H bonds in frame {}/{}'.format(frame_count, self.nb_frames))
+        #print('Time to compute {} H-bonds: {}s'.format(len(result), _np.round(time.time()-t0,5)))
         self._set_results(result)
 
     def set_hbonds_only_water_in_convex_hull(self):

@@ -29,6 +29,7 @@ def load(parent):
     ui.checkBox_glu_his.clicked.connect(show_motifs)
     ui.checkBox_his_his.clicked.connect(show_motifs)
     ui.checkBox_ser_backbone.clicked.connect(show_motifs)
+    ui.checkBox_asp_backbone.clicked.connect(show_motifs)
     ui.checkBox_his_ser.clicked.connect(show_motifs)
     ui.checkBox_asp_ser.clicked.connect(show_motifs)
 
@@ -57,8 +58,14 @@ def is_his(res, atom):
 def is_asn(res, atom):
     return ((res == 'ASN') and (atom in ['ND1', 'OD2']))
 
-def is_backbone(res, atom):
+def is_backbone_o(res, atom):
     return (atom=='O')
+    
+def is_backbone_n(res, atom):
+    return (atom=='N')
+    
+def is_backbone(res, atom):
+    return (is_backbone_o(res, atom) or is_backbone_n(res, atom))
 
 def reset_text_color():
     ui.checkBox_asp_asn.setStyleSheet("color: black")
@@ -67,6 +74,7 @@ def reset_text_color():
     ui.checkBox_his_his.setStyleSheet("color: black")
     ui.checkBox_his_ser.setStyleSheet("color: black")
     ui.checkBox_ser_backbone.setStyleSheet("color: black")
+    ui.checkBox_asp_backbone.setStyleSheet("color: black")
 
 def show_motifs():
     reset_text_color()
@@ -105,10 +113,16 @@ def show_motifs():
                 edge_data['color'] = 'brown'
                 continue
         if ui.checkBox_ser_backbone.isChecked():
-            if (is_ser_thr(resn1, atom1) and is_backbone(resn2, atom2)) or (is_ser_thr(resn2, atom2) and is_backbone(resn1, atom1)):
+            if (is_ser_thr(resn1, atom1) and is_backbone_o(resn2, atom2)) or (is_ser_thr(resn2, atom2) and is_backbone_o(resn1, atom1)):
                 ui.checkBox_ser_backbone.setStyleSheet("color: orange")
                 main_window.interactive_graph.selected_nodes += [node, other_node]
                 edge_data['color'] = 'orange'
+                continue
+        if ui.checkBox_asp_backbone.isChecked():
+            if (is_asp_glu(resn1, atom1) and is_backbone(resn2, atom2)) or (is_asp_glu(resn2, atom2) and is_backbone(resn1, atom1)):
+                ui.checkBox_asp_backbone.setStyleSheet("color: purple")
+                main_window.interactive_graph.selected_nodes += [node, other_node]
+                edge_data['color'] = 'purple'
                 continue
         edge_data['color'] = 'black'
     main_window.interactive_graph.selected_nodes = list(set(main_window.interactive_graph.selected_nodes))
@@ -119,7 +133,7 @@ class Ui_GroupBox(object):
     def setupUi(self, GroupBox):
         if not GroupBox.objectName():
             GroupBox.setObjectName(u"GroupBox")
-        GroupBox.resize(453, 267)
+        GroupBox.resize(452, 296)
         sizePolicy = QSizePolicy(QSizePolicy.Preferred, QSizePolicy.Minimum)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -164,6 +178,11 @@ class Ui_GroupBox(object):
 
         self.verticalLayout_2.addWidget(self.checkBox_his_ser)
 
+        self.checkBox_asp_backbone = QCheckBox(self.groupBox)
+        self.checkBox_asp_backbone.setObjectName(u"checkBox_asp_backbone")
+
+        self.verticalLayout_2.addWidget(self.checkBox_asp_backbone)
+
 
         self.verticalLayout_3.addLayout(self.verticalLayout_2)
 
@@ -185,4 +204,5 @@ class Ui_GroupBox(object):
         self.checkBox_his_his.setText(QCoreApplication.translate("GroupBox", u"His ND1 or NE2 - His ND1 or NE2", None))
         self.checkBox_asp_asn.setText(QCoreApplication.translate("GroupBox", u"Asp/Glu carboxylate oxygen - Asn ND1 or OD2", None))
         self.checkBox_his_ser.setText(QCoreApplication.translate("GroupBox", u"His ND1 or NE2 - Ser/Thr hydroxyl oxygen", None))
+        self.checkBox_asp_backbone.setText(QCoreApplication.translate("GroupBox", u"Asp/Glu carboxylate oxygen - backbone", None))
     # retranslateUi

@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>453</width>
-    <height>267</height>
+    <width>452</width>
+    <height>296</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -70,6 +70,13 @@
          <widget class="QCheckBox" name="checkBox_his_ser">
           <property name="text">
            <string>His ND1 or NE2 - Ser/Thr hydroxyl oxygen</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QCheckBox" name="checkBox_asp_backbone">
+          <property name="text">
+           <string>Asp/Glu carboxylate oxygen - backbone</string>
           </property>
          </widget>
         </item>

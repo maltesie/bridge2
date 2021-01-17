@@ -468,7 +468,7 @@ class Ui_GroupBox(object):
         self.pushButton_plot_timeseries.setToolTip(QCoreApplication.translate("GroupBox", u"<html><head/><body><p align=\"justify\">Compute the number of H bonds per frame.</p></body></html>", None))
 #endif // QT_CONFIG(tooltip)
         self.pushButton_plot_timeseries.setText(QCoreApplication.translate("GroupBox", u"Plot", None))
-        self.groupBox_joint_occupancy.setTitle(QCoreApplication.translate("GroupBox", u"Joint Ouccupancy", None))
+        self.groupBox_joint_occupancy.setTitle(QCoreApplication.translate("GroupBox", u"Joint Occupancy", None))
         self.label_3.setText(QCoreApplication.translate("GroupBox", u"scatter dot size", None))
         self.lineEdit_scatter_size.setText(QCoreApplication.translate("GroupBox", u"1", None))
         self.lineEdit_scatter_size.setPlaceholderText(QCoreApplication.translate("GroupBox", u"0 - 100", None))

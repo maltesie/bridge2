@@ -32,6 +32,7 @@ import numpy as _np
 import networkx as _nx
 import MDAnalysis as _MDAnalysis
 from copy import deepcopy
+#import time
 
 class NetworkAnalysis:
     
@@ -242,6 +243,7 @@ class NetworkAnalysis:
         else: graph = self.initial_graph
         if average_across_frames: frames = self.nb_frames
         else: frames = 1
+        #t0 = time.time()
         centralities = {node:_np.zeros(frames) for node in graph.nodes()}
         centralities_normalized = {node:_np.zeros(frames) for node in graph.nodes()}
         for i in range(frames):
@@ -259,6 +261,7 @@ class NetworkAnalysis:
                 centrality_i, normalization_factor = _hf.biological_centrality(g_i)
             else: 
                 raise AssertionError("centrality_type has to be 'betweenness', 'degree' or 'biological'")
+            if normalization_factor == 0: normalization_factor = 1.0
             centrality_normalized_i = {key:value/normalization_factor for key, value in centrality_i.items()}
             for node in centrality_i: 
                 centralities[node][i] = centrality_i[node]
@@ -267,6 +270,7 @@ class NetworkAnalysis:
         for node in centralities: 
             centralities[node] = _hf.round_to_1(centralities[node].mean())
             centralities_normalized[node] = _hf.round_to_1(centralities_normalized[node].mean())
+        #print('Time to compute {} centrality: {}s'.format(centrality_type, _np.round(time.time()-t0,5)))
         return centralities, centralities_normalized
     
     def _reload_universe(self):

@@ -3,13 +3,16 @@
 ################################################################################
 ## Form generated from reading UI file 'motif_detection.ui'
 ##
-## Created by: Qt User Interface Compiler version 5.15.2
+## Created by: Qt User Interface Compiler version 5.15.0
 ##
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
 
-from PySide2.QtCore import *
-from PySide2.QtGui import *
+from PySide2.QtCore import (QCoreApplication, QDate, QDateTime, QMetaObject,
+    QObject, QPoint, QRect, QSize, QTime, QUrl, Qt)
+from PySide2.QtGui import (QBrush, QColor, QConicalGradient, QCursor, QFont,
+    QFontDatabase, QIcon, QKeySequence, QLinearGradient, QPalette, QPainter,
+    QPixmap, QRadialGradient)
 from PySide2.QtWidgets import *
 
 
@@ -17,7 +20,7 @@ class Ui_GroupBox(object):
     def setupUi(self, GroupBox):
         if not GroupBox.objectName():
             GroupBox.setObjectName(u"GroupBox")
-        GroupBox.resize(453, 267)
+        GroupBox.resize(452, 296)
         sizePolicy = QSizePolicy(QSizePolicy.Preferred, QSizePolicy.Minimum)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -62,6 +65,11 @@ class Ui_GroupBox(object):
 
         self.verticalLayout_2.addWidget(self.checkBox_his_ser)
 
+        self.checkBox_asp_backbone = QCheckBox(self.groupBox)
+        self.checkBox_asp_backbone.setObjectName(u"checkBox_asp_backbone")
+
+        self.verticalLayout_2.addWidget(self.checkBox_asp_backbone)
+
 
         self.verticalLayout_3.addLayout(self.verticalLayout_2)
 
@@ -83,5 +91,6 @@ class Ui_GroupBox(object):
         self.checkBox_his_his.setText(QCoreApplication.translate("GroupBox", u"His ND1 or NE2 - His ND1 or NE2", None))
         self.checkBox_asp_asn.setText(QCoreApplication.translate("GroupBox", u"Asp/Glu carboxylate oxygen - Asn ND1 or OD2", None))
         self.checkBox_his_ser.setText(QCoreApplication.translate("GroupBox", u"His ND1 or NE2 - Ser/Thr hydroxyl oxygen", None))
+        self.checkBox_asp_backbone.setText(QCoreApplication.translate("GroupBox", u"Asp/Glu carboxylate oxygen - backbone", None))
     # retranslateUi
 

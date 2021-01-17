@@ -35,6 +35,7 @@ import MDAnalysis as _MDAnalysis
 from scipy import spatial as _sp
 from scipy.sparse import csr_matrix
 from scipy.sparse.csgraph import dijkstra
+import time
 
 class WireAnalysis(NetworkAnalysis):
     
@@ -74,6 +75,7 @@ class WireAnalysis(NetworkAnalysis):
         hash_table = {}
         no_direct_bonds = False
         self._allow_direct_bonds = allow_direct_bonds
+        t0 = time.time()
         for ts in self._universe.trajectory[self._trajectory_slice]:
         
             water_coordinates = self._water.positions
@@ -187,7 +189,7 @@ class WireAnalysis(NetworkAnalysis):
             frame_count += 1
             
             if self.progress_callback is not None: self.progress_callback.emit('Computing water wires in frame {}/{}'.format(frame_count, self.nb_frames))
-        
+        print('Time to compute {} water wires: {}s'.format(len(distances), _np.round(time.time()-t0,5)))
         self._set_results(distances)
         self.wire_lengths = distances
         self.hashs = path_hashs
@@ -203,6 +205,7 @@ class WireAnalysis(NetworkAnalysis):
         this_frame_table = {}
         no_direct_bonds = False
         self._allow_direct_bonds = allow_direct_bonds
+        #t0 = time.time()
         for ts in self._universe.trajectory[self._trajectory_slice]:
     
             water_coordinates = self._water.positions
@@ -328,6 +331,7 @@ class WireAnalysis(NetworkAnalysis):
             
             frame_count += 1
             if self.progress_callback is not None: self.progress_callback.emit('Computing water wires in frame {}/{}'.format(frame_count, self.nb_frames))
+        #print('Time to compute {} water wires: {}s'.format(len(results), _np.round(time.time()-t0,5)))
         self._set_results(results)
         self.wire_lengths = results
         self.hashs = intervals_results
