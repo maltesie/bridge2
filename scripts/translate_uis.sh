@@ -12,3 +12,5 @@ pyside2-uic $DIR/../ui/md_statistics.ui > $DIR/../ui/plugins/md_statistics.py
 pyside2-uic $DIR/../ui/motif_detection.ui > $DIR/../ui/plugins/motif_detection.py
 pyside2-uic $DIR/../ui/clusters.ui > $DIR/../ui/plugins/clusters.py
 pyside2-uic $DIR/../ui/centrality.ui > $DIR/../ui/plugins/centrality.py
+
+#this is a test
