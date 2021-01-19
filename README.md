@@ -35,12 +35,12 @@ and cd into the directory you want to have the environment installed in. Then in
 prerequisites:
 
 
-### Ubuntu Linux dependencies
+### 1.a Ubuntu Linux dependencies
 
 > sudo apt-get install qt5-default build-essential python3-dev python3-venv
 
 
-### macOS dependencies
+### 1.b macOS dependencies
 
 In order to install the required software for Bridge2 to work, we recommend using the 
 Homebrew package manager. The later commands assume it is installed on your system. You can
@@ -55,7 +55,7 @@ Then install the prerequisites:
 > brew install qt5 python
 
 
-### Setup and run Bridge2
+### 2 Setup and run Bridge2
 
 Then run the setup script that comes with bridge:
 
@@ -66,6 +66,6 @@ You can now run Bridge2 using the following command:
 
 > ./bridge
 
-If you install a new version of Bridge2, delete your old installation folder, unpack the new
-archive and run ./setup once again to set the new version up. After that start Bridge2 with 
-./bridge
+### 3 Reinstall or update Bridge2
+
+If you install a new version of Bridge2, delete your old installation folder, unpack the new archive, cd into the new bridge2 folder and follow the instructions under step 2.
