@@ -21,8 +21,8 @@ bond networks in membrane proteins, Journal of Chemical Theory and Computation 2
 
 and
 
-Federico Guerra, Malte Siemers, Christopher Mielack, and Ana-Nicoleta Bondar Dynamics of
-Long-Distance Hydrogen-Bond Networks in Photosystem II The Journal of Physical
+Federico Guerra, Malte Siemers, Christopher Mielack, and Ana-Nicoleta Bondar. Dynamics of
+Long-Distance Hydrogen-Bond Networks in Photosystem II, The Journal of Physical
 Chemistry B 2018 122 (17), 4625-4641
 
 ## Installation guide
