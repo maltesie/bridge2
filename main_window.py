@@ -302,18 +302,6 @@ class Ui_MainWindow(object):
 
         self.verticalLayout.addWidget(self.groupBox_centralities)
 
-        self.horizontalLayout_17 = QHBoxLayout()
-        self.horizontalLayout_17.setObjectName(u"horizontalLayout_17")
-        self.horizontalLayout_17.setContentsMargins(-1, 0, -1, -1)
-        self.radioButton_unique_shortest = QRadioButton(self.groupBox_colors)
-        self.radioButton_unique_shortest.setObjectName(u"radioButton_unique_shortest")
-        self.radioButton_unique_shortest.setEnabled(False)
-
-        self.horizontalLayout_17.addWidget(self.radioButton_unique_shortest)
-
-
-        self.verticalLayout.addLayout(self.horizontalLayout_17)
-
 
         self.verticalLayout_3.addWidget(self.groupBox_colors)
 
@@ -841,7 +829,6 @@ class Ui_MainWindow(object):
         self.checkBox_color_legend.setText(QCoreApplication.translate("MainWindow", u"legend", None))
         self.radioButton_betweenness.setText(QCoreApplication.translate("MainWindow", u"betweenness centrality", None))
         self.radioButton_degree.setText(QCoreApplication.translate("MainWindow", u"degree centrality", None))
-        self.radioButton_unique_shortest.setText(QCoreApplication.translate("MainWindow", u"unique shortest paths for single coordinate set", None))
         self.groupBox.setTitle(QCoreApplication.translate("MainWindow", u"Sizes", None))
         self.label_3.setText(QCoreApplication.translate("MainWindow", u"nodes:             ", None))
         self.label_6.setText(QCoreApplication.translate("MainWindow", u"edges:             ", None))

@@ -418,7 +418,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.buttonGroup_coloring.addButton(self.radioButton_colors)
         self.buttonGroup_coloring.addButton(self.radioButton_degree)
         self.buttonGroup_coloring.addButton(self.radioButton_betweenness)
-        self.buttonGroup_coloring.addButton(self.radioButton_unique_shortest)
         self.buttonGroup_rotation = QButtonGroup(self)
         self.buttonGroup_rotation.addButton(self.radioButton_rotation_zy)
         self.buttonGroup_rotation.addButton(self.radioButton_rotation_pca)
@@ -476,7 +475,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     
     def _set_enabled(self):
         self.checkBox_nb_water.setEnabled(self._search_parameter['algorithm'] == 'ww_dict')
-        self.radioButton_unique_shortest.setEnabled(self.analysis.nb_frames == 1)
     
     def export_analysis_summary(self):
         yes_no = {True:'Yes', False:'No'}

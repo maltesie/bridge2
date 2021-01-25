@@ -322,20 +322,10 @@ class NetworkAnalysis:
         betweenness_tot, betweenness_tot_norm = self.compute_centrality(centrality_type='betweenness', average_across_frames=False, use_filtered=False)
         degree_avg, degree_avg_norm = self.compute_centrality(centrality_type='degree', average_across_frames=True, use_filtered=False)
         degree_tot, degree_tot_norm = self.compute_centrality(centrality_type='degree', average_across_frames=False, use_filtered=False)
-        if self.nb_frames == 1:
-            bio_avg, bio_avg_norm = self.compute_centrality(centrality_type='biological', average_across_frames=True, use_filtered=False)
-            bio_tot, bio_tot_norm  = self.compute_centrality(centrality_type='biological', average_across_frames=False, use_filtered=False)
-            self.centralities = {'betweenness':{True:{True:betweenness_avg_norm, False:betweenness_avg},
-                                                False:{True:betweenness_tot_norm, False:betweenness_tot}},
-                                 'degree':{True:{True:degree_avg_norm, False:degree_avg},
-                                           False:{True:degree_tot_norm, False:degree_tot}},
-                                 'biological':{True:{True:bio_avg_norm, False:bio_avg},
-                                               False:{True:bio_tot_norm, False:bio_tot}}}
-        else:
-            self.centralities = {'betweenness':{True:{True:betweenness_avg_norm, False:betweenness_avg},
-                                                False:{True:betweenness_tot_norm, False:betweenness_tot}},
-                                 'degree':{True:{True:degree_avg_norm, False:degree_avg},
-                                           False:{True:degree_tot_norm, False:degree_tot}}}
+        self.centralities = {'betweenness':{True:{True:betweenness_avg_norm, False:betweenness_avg},
+                                            False:{True:betweenness_tot_norm, False:betweenness_tot}},
+                             'degree':{True:{True:degree_avg_norm, False:degree_avg},
+                                       False:{True:degree_tot_norm, False:degree_tot}}}
 
     def get_centralities(self):
         return self.centralities
@@ -346,6 +336,7 @@ class NetworkAnalysis:
         if self.residuewise: all_id = _np.array(self._all_ids)
         else: all_id = _np.array(self._all_ids_atomwise)
         if not include_water: all_id = all_id[:self._first_water_id]
+        #t = time.time()
         for in_frame in range(self.nb_frames):  
             if self.progress_callback is not None: self.progress_callback.emit('Extracting positional information from frame {}/{}'.format(in_frame, self.nb_frames))
             self._universe.trajectory[in_frame]
@@ -357,6 +348,7 @@ class NetworkAnalysis:
                 except KeyError:
                     self._node_positions_3d[node] = _np.empty((self.nb_frames, 3))
                     self._node_positions_3d[node][in_frame] = all_coordinates[all_id == node].mean(0)
+        #print(time.time()-t)
         if self.progress_callback is not None: self.progress_callback.emit('Done!')
         
     def get_node_positions_3d(self, in_frame=0):
