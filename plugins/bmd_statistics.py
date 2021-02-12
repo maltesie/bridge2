@@ -43,10 +43,10 @@ def update(parent):
     if main_window.analysis is not None: segname_colors = main_window._segname_colors
     if main_window._analysis_type == 'ww': 
         ui.groupBox_joint_occupancy.setTitle('Joint Occupancy of Water Wires')
-        ui.groupBox_nb_connections.setTitle('Timeseries of Sum of Water Wires')
+        ui.groupBox_nb_connections.setTitle('Time series of Sum of Water Wires')
     elif main_window._analysis_type == 'hb': 
         ui.groupBox_joint_occupancy.setTitle('Joint Occupancy of H Bonds')
-        ui.groupBox_nb_connections.setTitle('Timeseries of Sum of H Bonds')
+        ui.groupBox_nb_connections.setTitle('Time series of Sum of H Bonds')
 
 def toggle_stacked():
     ui.checkBox_stacked_histogram.setEnabled(ui.checkBox_color_segments_occupancy.isChecked())
@@ -458,7 +458,7 @@ class Ui_GroupBox(object):
         self.pushButton_plot_occupancy.setToolTip(QCoreApplication.translate("GroupBox", u"<html><head/><body><p>Compute histogram of H bond occupancies. Counts the number of H bonds with an occupancy equal or greater than the respective value.</p></body></html>", None))
 #endif // QT_CONFIG(tooltip)
         self.pushButton_plot_occupancy.setText(QCoreApplication.translate("GroupBox", u"Plot", None))
-        self.groupBox_nb_connections.setTitle(QCoreApplication.translate("GroupBox", u"Number of connections timeseries", None))
+        self.groupBox_nb_connections.setTitle(QCoreApplication.translate("GroupBox", u"Number of connections time series", None))
 #if QT_CONFIG(tooltip)
         self.checkBox_color_segments_timeseries.setToolTip(QCoreApplication.translate("GroupBox", u"<html><head/><body><p align=\"justify\">Toggle if histogram bars are colored by segment or molecule. With colors turned on, comparing to other analyses is not possible.</p></body></html>", None))
 #endif // QT_CONFIG(tooltip)

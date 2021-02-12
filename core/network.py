@@ -260,7 +260,7 @@ class NetworkAnalysis:
             elif centrality_type == 'biological': 
                 centrality_i, normalization_factor = _hf.biological_centrality(g_i)
             else: 
-                raise AssertionError("centrality_type has to be 'betweenness', 'degree' or 'biological'")
+                raise AssertionError("centrality_type has to be 'betweenness' or 'degree' or 'biological'")
             if normalization_factor == 0: normalization_factor = 1.0
             centrality_normalized_i = {key:value/normalization_factor for key, value in centrality_i.items()}
             for node in centrality_i: 

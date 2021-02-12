@@ -377,7 +377,7 @@
          <string>Compute all H bonds within the static selection.</string>
         </property>
         <property name="text">
-         <string>H bonds in static selection</string>
+         <string>H-bonds in static selection</string>
         </property>
         <property name="checked">
          <bool>true</bool>
@@ -392,7 +392,7 @@
            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;Compute all H bonds within the union of the static selection and all water within the specified distance of the static selection.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
           </property>
           <property name="text">
-           <string>H bonds in static selection and water around</string>
+           <string>H-bonds in static selection and water around</string>
           </property>
          </widget>
         </item>
@@ -438,7 +438,7 @@
         <item>
          <widget class="QCheckBox" name="checkBox_not_water_water">
           <property name="text">
-           <string>no water-water H bonds</string>
+           <string>no water-water H-bonds</string>
           </property>
           <property name="checked">
            <bool>true</bool>
@@ -501,7 +501,7 @@
         <item>
          <widget class="QCheckBox" name="checkBox_wires_allow_direct_bonds">
           <property name="text">
-           <string>direct H bonds</string>
+           <string>direct H-bonds</string>
           </property>
          </widget>
         </item>

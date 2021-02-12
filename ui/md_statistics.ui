@@ -288,7 +288,7 @@
    <item>
     <widget class="QGroupBox" name="groupBox_nb_connections">
      <property name="title">
-      <string>Number of connections timeseries</string>
+      <string>Number of connections time series</string>
      </property>
      <layout class="QVBoxLayout" name="verticalLayout_3">
       <item>
