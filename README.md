@@ -42,7 +42,7 @@ prerequisites:
 > sudo apt-get install qt5-default build-essential python3-dev python3-venv
 
 
-#### 1.b macOS dependencies
+#### 1.b macOS
 
 In order to install the required software for Bridge2 to work, we recommend using the 
 Homebrew package manager. The later commands assume it is installed on your system. You can
