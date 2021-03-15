@@ -30,7 +30,8 @@ Chemistry B 2018 122 (17), 4625-4641
 This is a standalone version of Bridge2. It is written in Python3 and Qt5 and depends on Qt5
 (5.14.1+) and the python packages MDAnalysis (0.19.2+) and PySide2 (5.14.1+). After installing 
 the dependencies you can use the setup script to create a virtual environment with the 
-necessary python packages in your bridge folder:
+necessary python packages in your bridge folder. IMPORTANT: Remember to deactivate any other
+virtual environment or conda environment before the installation.
 
 ### 1 Install dependencies
 
