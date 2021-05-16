@@ -75,7 +75,7 @@ class WireAnalysis(NetworkAnalysis):
         hash_table = {}
         no_direct_bonds = False
         self._allow_direct_bonds = allow_direct_bonds
-        t0 = time.time()
+        #t0 = time.time()
         for ts in self._universe.trajectory[self._trajectory_slice]:
         
             water_coordinates = self._water.positions
@@ -138,7 +138,7 @@ class WireAnalysis(NetworkAnalysis):
             rows, cols = rowsncols.reshape(hbonds.shape).T
             nb_nodes = uniques.size
             residues = (uniques < self._first_water_id).nonzero()[0]
-            data = _np.ones(len(hbonds), dtype=_np.float)
+            data = _np.ones(len(hbonds), dtype=float)
             g = csr_matrix((data, (rows, cols)), shape=(nb_nodes, nb_nodes))
             local_rows, local_cols = rows[water_da], cols[water_da]
             g[local_rows, local_cols] = _np.inf
@@ -182,14 +182,14 @@ class WireAnalysis(NetworkAnalysis):
                         path_hashs[wire_info][frame_count] = -1
                         distances[wire_info][frame_count] = 0
                     except:
-                        distances[wire_info] = _np.ones(self.nb_frames, dtype=_np.int)*_np.inf
+                        distances[wire_info] = _np.ones(self.nb_frames, dtype=int)*_np.inf
                         distances[wire_info][frame_count] = 0
-                        path_hashs[wire_info] = _np.arange(self.nb_frames, dtype=_np.int)
+                        path_hashs[wire_info] = _np.arange(self.nb_frames, dtype=int)
                         path_hashs[wire_info][frame_count] = -1
             frame_count += 1
             
             if self.progress_callback is not None: self.progress_callback.emit('Computing water wires in frame {}/{}'.format(frame_count, self.nb_frames))
-        print('Time to compute {} water wires: {}s'.format(len(distances), _np.round(time.time()-t0,5)))
+        #print('Time to compute {} water wires: {}s'.format(len(distances), _np.round(time.time()-t0,5)))
         self._set_results(distances)
         self.wire_lengths = distances
         self.hashs = path_hashs
@@ -311,7 +311,7 @@ class WireAnalysis(NetworkAnalysis):
                         except:
                             results[wire_info] = _np.ones(frames)*_np.inf
                             results[wire_info][frame_count] = water_in_wire
-                            intervals_results[wire_info] = _np.arange(frames, dtype=_np.int)
+                            intervals_results[wire_info] = _np.arange(frames, dtype=int)
                             intervals_results[wire_info][frame_count] = wire_hash
                     
                     already_checked.append(source)  
@@ -324,14 +324,14 @@ class WireAnalysis(NetworkAnalysis):
                         intervals_results[wire_info][frame_count] = -1
                         results[wire_info][frame_count] = 0
                     except:
-                        results[wire_info] = _np.ones(frames, dtype=_np.int)*_np.inf
+                        results[wire_info] = _np.ones(frames, dtype=int)*_np.inf
                         results[wire_info][frame_count] = 0
-                        intervals_results[wire_info] = _np.arange(frames, dtype=_np.int)
+                        intervals_results[wire_info] = _np.arange(frames, dtype=int)
                         intervals_results[wire_info][frame_count] = -1
             
             frame_count += 1
             if self.progress_callback is not None: self.progress_callback.emit('Computing water wires in frame {}/{}'.format(frame_count, self.nb_frames))
-        #print('Time to compute {} water wires: {}s'.format(len(results), _np.round(time.time()-t0,5)))
+        #print('Time to compute {} water wires with {} max waters and convex hull {}: {}s'.format(len(results), max_water, water_in_convex_hull, _np.round(time.time()-t0,5)))
         self._set_results(results)
         self.wire_lengths = results
         self.hashs = intervals_results

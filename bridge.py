@@ -309,7 +309,7 @@ class NewAnalysisDialog(QDialog, Ui_NewAnalysisDialog):
         if self.main_window.working:
             Error('Multi-Threading Error!', 'There is another computation running. If this keeps happening, please restart Bridge.')
             return
-        worker = Worker(self.compute_initial_state, **kwargs) # Any other args, kwargs are passed to the run function
+        worker = Worker(self.compute_initial_state, **kwargs) 
         worker.signals.finished.connect(self.main_window.init_interactive_graph)
         worker.signals.progress.connect(self.main_window.update_status_bar)
         worker.signals.error.connect(self.error_in_worker)
@@ -357,7 +357,7 @@ class NewAnalysisDialog(QDialog, Ui_NewAnalysisDialog):
         
         if hb_selection: self.main_window.analysis.set_hbonds_in_selection()
         elif hb_around: self.main_window.analysis.set_hbonds_in_selection_and_water_around(around_radius=search_args['around'], not_water_water=search_args['not_water_water'])
-        elif ww_dict: self.main_window.analysis.set_water_wires(max_water=search_args['max_water'], allow_direct_bonds=search_args['allow_direct_bonds'])
+        elif ww_dict: self.main_window.analysis.set_water_wires(max_water=search_args['max_water'], allow_direct_bonds=search_args['allow_direct_bonds'], water_in_convex_hull=search_args['ww_in_hull'])
         elif hydrophobic: self.main_window.analysis.set_hydrophobic_contacts_in_selection()
         
         self.main_window.analysis.add_missing_residues = int(self.lineEdit_add_residue.text())

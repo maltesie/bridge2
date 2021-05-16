@@ -16,6 +16,7 @@ def histogram(data, mi=None, ma=None, nb_bins=10, xlabel='', ylabel='Count', cum
     ax.set_xlabel(xlabel , fontsize = 16)
     ax.set_ylabel(ylabel , fontsize = 16)
     ax.hist(data, bins, alpha=0.65, rwidth=0.8, cumulative=cumulative)
+    plt.tight_layout()
     fig.show()
     
 def multi_histogram(data, colors=None, legend_labels=None, mi=None, ma=None, nb_bins=10, xlabel='', ylabel='Count', cumulative=False, stacked=False):
@@ -35,6 +36,7 @@ def multi_histogram(data, colors=None, legend_labels=None, mi=None, ma=None, nb_
         colors = [rgb_to_string(cmap(cvalue)) for cvalue in np.linspace(0, 1, nb_data)]
     ax.hist(data, bins, color=colors, alpha=0.65, stacked=stacked, rwidth=0.8, cumulative=cumulative)
     if legend_labels is not None: ax.legend(legend_labels)
+    plt.tight_layout()
     fig.show()
     
 def bar(data, labels, ylabel='Count', integer_y=True, show_zeros=False):
@@ -54,6 +56,7 @@ def bar(data, labels, ylabel='Count', integer_y=True, show_zeros=False):
     if integer_y: ax.yaxis.set_major_locator(MaxNLocator(integer=True))
     for tick in ax.get_xticklabels():
         tick.set_rotation(45)
+    plt.tight_layout()
     fig.show()
     
 def multi_bar(data, labels, colors, ylabel='Count', integer_y=True, show_zeros=False):
@@ -79,6 +82,7 @@ def multi_bar(data, labels, colors, ylabel='Count', integer_y=True, show_zeros=F
     if integer_y: ax.yaxis.set_major_locator(MaxNLocator(integer=True))
     for tick in ax.get_xticklabels():
         tick.set_rotation(45)
+    plt.tight_layout()
     fig.show()
     
 def timeseries(data, frame_time=None, frame_unit=None, xlabel='Frames', ylabel='Count'):
@@ -97,6 +101,7 @@ def timeseries(data, frame_time=None, frame_unit=None, xlabel='Frames', ylabel='
         if xlabel == 'Frames': ax.set_xlabel('Time [{}]'.format(unit) , fontsize = 16)
         xticks = [str(int(tick*frame_time)) if int(tick*frame_time)<1000 else str(np.round(tick*frame_time/1000, 1)) for tick in xticks]
         ax.set_xticklabels(xticks)
+    plt.tight_layout()
     fig.show()
     
 def multi_timeseries(data, colors=None, legend_labels=None, frame_time=None, frame_unit=None, xlabel='Frames', ylabel='Count'):
@@ -124,6 +129,7 @@ def multi_timeseries(data, colors=None, legend_labels=None, frame_time=None, fra
         if legend_labels is None: ax.plot(range(nb_points), data[i], color=colors[i], alpha=0.65)
         else: ax.plot(range(nb_points), data[i], color=colors[i], label=legend_labels[i], alpha=0.65)
     if legend_labels is not None: ax.legend()
+    plt.tight_layout()
     fig.show()
     
 def boolean_scatter(ts, scatter_size=0.5, frame_time=None, frame_unit=None, xlabel='Frames'):
@@ -148,4 +154,23 @@ def boolean_scatter(ts, scatter_size=0.5, frame_time=None, frame_unit=None, xlab
         if xlabel == 'Frames': ax.set_xlabel('Time [{}]'.format(unit) , fontsize = 16)
         xticks = [str(int(tick*frame_time)) if int(tick*frame_time)<1000 else str(np.round(tick*frame_time/1000, 1)) for tick in xticks]
         ax.set_xticklabels(xticks)
+    plt.tight_layout()
+    fig.show()
+    
+def heatmap(data, xresidues, yresidues, title):
+    fig = plt.figure()
+    ax = fig.add_subplot(111)
+    ax.set_xlabel('residues', fontsize = 16)
+    ax.set_ylabel('residues', fontsize = 16)
+    im = ax.imshow(data)
+    cbar = ax.figure.colorbar(im, ax=ax)
+    cbar.ax.set_ylabel('Occupancy', rotation=-90, va="bottom")
+    ax.set_xticks(np.arange(len(xresidues)))
+    ax.set_yticks(np.arange(len(yresidues)))
+    ax.set_xticklabels(xresidues)
+    ax.set_yticklabels(yresidues)
+    plt.setp(ax.get_xticklabels(), rotation=45, ha="right",
+             rotation_mode="anchor")
+    ax.set_title(title)
+    plt.tight_layout()
     fig.show()

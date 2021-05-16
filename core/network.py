@@ -32,7 +32,7 @@ import numpy as _np
 import networkx as _nx
 import MDAnalysis as _MDAnalysis
 from copy import deepcopy
-#import time
+import time
 
 class NetworkAnalysis:
     

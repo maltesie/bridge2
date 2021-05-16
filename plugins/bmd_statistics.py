@@ -2,12 +2,12 @@
 
 from PySide2.QtCore import (QCoreApplication, QMetaObject, Qt, QSize)
 from PySide2.QtWidgets import (QGroupBox, QVBoxLayout, QHBoxLayout, QFileDialog,
-     QCheckBox, QSpacerItem, QSizePolicy, QPushButton, QLabel, QLineEdit)
+     QCheckBox, QSpacerItem, QSizePolicy, QPushButton, QLabel, QLineEdit, QRadioButton)
 
-from core.helpfunctions import (Error, get_segnames, rgb_to_string, 
+from core.helpfunctions import (Error, get_segnames, get_resids, rgb_to_string, 
      histogram_to_string, string_in_columns)
 from core.drawing import (histogram, multi_histogram, boolean_scatter, timeseries,
-                          multi_timeseries)
+                          multi_timeseries, heatmap)
 from itertools import combinations
 import numpy as np
 import matplotlib as mpl
@@ -128,12 +128,27 @@ def compute_jo():
 def plot_jo():
     ts, frame_time, frame_unit = compute_jo()
     if ts is None: return
-    try:
-        scatter_size = float(ui.lineEdit_scatter_size.text())
-    except:
-        Error('Format Error!', 'Please specify the dot size as a floating point number.')
-        return
-    boolean_scatter(ts, scatter_size=scatter_size, frame_time=frame_time, frame_unit=frame_unit)
+    
+    if ui.radioButton_scatter.isChecked(): 
+        try:
+            scatter_size = float(ui.lineEdit_scatter_size.text())
+        except:
+            Error('Format Error!', 'Please specify the dot size as a floating point number.')
+            return
+        boolean_scatter(ts, scatter_size=scatter_size, frame_time=frame_time, frame_unit=frame_unit)
+    else: 
+        nodes = [node for node in main_window.analysis.filtered_graph.nodes()]
+        occupancies = {node:{othernode:0.0 for othernode in nodes} for node in nodes}
+        for key, result in main_window.analysis.filtered_results.items():
+            a, b = key.split(':')
+            occ = result.mean()
+            occupancies[a][b] = occupancies[b][a] = occ
+        resids = get_resids(nodes)
+        ind = np.argsort(resids)
+        nodes = [nodes[i] for i in ind]
+        data = np.array([[occupancies[node][othernode] for node in nodes] for othernode in nodes[::-1]])
+        heatmap(data, nodes, nodes[::-1], 'Joint Occupancy: '+str(np.round(ts.mean()*100,1)))
+        
 
 def save_jo():
     ts, frame_time, frame_unit = compute_jo()
@@ -391,6 +406,12 @@ class Ui_GroupBox(object):
         self.verticalLayout_4.setObjectName(u"verticalLayout_4")
         self.horizontalLayout_10 = QHBoxLayout()
         self.horizontalLayout_10.setObjectName(u"horizontalLayout_10")
+        self.radioButton_scatter = QRadioButton(self.groupBox_joint_occupancy)
+        self.radioButton_scatter.setObjectName(u"radioButton_scatter")
+        self.radioButton_scatter.setChecked(True)
+
+        self.horizontalLayout_10.addWidget(self.radioButton_scatter)
+
         self.label_3 = QLabel(self.groupBox_joint_occupancy)
         self.label_3.setObjectName(u"label_3")
 
@@ -411,6 +432,11 @@ class Ui_GroupBox(object):
 
         self.horizontalLayout_3 = QHBoxLayout()
         self.horizontalLayout_3.setObjectName(u"horizontalLayout_3")
+        self.radioButton_heatmap = QRadioButton(self.groupBox_joint_occupancy)
+        self.radioButton_heatmap.setObjectName(u"radioButton_heatmap")
+
+        self.horizontalLayout_3.addWidget(self.radioButton_heatmap)
+
         self.horizontalSpacer_4 = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
 
         self.horizontalLayout_3.addItem(self.horizontalSpacer_4)
@@ -469,9 +495,11 @@ class Ui_GroupBox(object):
 #endif // QT_CONFIG(tooltip)
         self.pushButton_plot_timeseries.setText(QCoreApplication.translate("GroupBox", u"Plot", None))
         self.groupBox_joint_occupancy.setTitle(QCoreApplication.translate("GroupBox", u"Joint Occupancy", None))
-        self.label_3.setText(QCoreApplication.translate("GroupBox", u"scatter dot size", None))
+        self.radioButton_scatter.setText(QCoreApplication.translate("GroupBox", u"scatter plot", None))
+        self.label_3.setText(QCoreApplication.translate("GroupBox", u"with dot size", None))
         self.lineEdit_scatter_size.setText(QCoreApplication.translate("GroupBox", u"1", None))
         self.lineEdit_scatter_size.setPlaceholderText(QCoreApplication.translate("GroupBox", u"0 - 100", None))
+        self.radioButton_heatmap.setText(QCoreApplication.translate("GroupBox", u"heatmap", None))
         self.pushButton_save_jo.setText(QCoreApplication.translate("GroupBox", u"Data", None))
 #if QT_CONFIG(tooltip)
         self.pushButton_plot_jo.setToolTip(QCoreApplication.translate("GroupBox", u"<html><head/><body><p align=\"justify\">Compute the joint occupancy of the H bond network. The joint occupancy is true, if all H bonds of the network are present in a frame and false otherwise.</p></body></html>", None))

@@ -203,6 +203,12 @@ class Ui_GroupBox(object):
         self.verticalLayout_4.setObjectName(u"verticalLayout_4")
         self.horizontalLayout_10 = QHBoxLayout()
         self.horizontalLayout_10.setObjectName(u"horizontalLayout_10")
+        self.radioButton_scatter = QRadioButton(self.groupBox_joint_occupancy)
+        self.radioButton_scatter.setObjectName(u"radioButton_scatter")
+        self.radioButton_scatter.setChecked(True)
+
+        self.horizontalLayout_10.addWidget(self.radioButton_scatter)
+
         self.label_3 = QLabel(self.groupBox_joint_occupancy)
         self.label_3.setObjectName(u"label_3")
 
@@ -223,6 +229,11 @@ class Ui_GroupBox(object):
 
         self.horizontalLayout_3 = QHBoxLayout()
         self.horizontalLayout_3.setObjectName(u"horizontalLayout_3")
+        self.radioButton_heatmap = QRadioButton(self.groupBox_joint_occupancy)
+        self.radioButton_heatmap.setObjectName(u"radioButton_heatmap")
+
+        self.horizontalLayout_3.addWidget(self.radioButton_heatmap)
+
         self.horizontalSpacer_4 = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
 
         self.horizontalLayout_3.addItem(self.horizontalSpacer_4)
@@ -270,7 +281,7 @@ class Ui_GroupBox(object):
         self.pushButton_plot_occupancy.setToolTip(QCoreApplication.translate("GroupBox", u"<html><head/><body><p>Compute histogram of H bond occupancies. Counts the number of H bonds with an occupancy equal or greater than the respective value.</p></body></html>", None))
 #endif // QT_CONFIG(tooltip)
         self.pushButton_plot_occupancy.setText(QCoreApplication.translate("GroupBox", u"Plot", None))
-        self.groupBox_nb_connections.setTitle(QCoreApplication.translate("GroupBox", u"Number of connections timeseries", None))
+        self.groupBox_nb_connections.setTitle(QCoreApplication.translate("GroupBox", u"Number of connections time series", None))
 #if QT_CONFIG(tooltip)
         self.checkBox_color_segments_timeseries.setToolTip(QCoreApplication.translate("GroupBox", u"<html><head/><body><p align=\"justify\">Toggle if histogram bars are colored by segment or molecule. With colors turned on, comparing to other analyses is not possible.</p></body></html>", None))
 #endif // QT_CONFIG(tooltip)
@@ -281,9 +292,11 @@ class Ui_GroupBox(object):
 #endif // QT_CONFIG(tooltip)
         self.pushButton_plot_timeseries.setText(QCoreApplication.translate("GroupBox", u"Plot", None))
         self.groupBox_joint_occupancy.setTitle(QCoreApplication.translate("GroupBox", u"Joint Occupancy", None))
-        self.label_3.setText(QCoreApplication.translate("GroupBox", u"scatter dot size", None))
+        self.radioButton_scatter.setText(QCoreApplication.translate("GroupBox", u"scatter plot", None))
+        self.label_3.setText(QCoreApplication.translate("GroupBox", u"with dot size", None))
         self.lineEdit_scatter_size.setText(QCoreApplication.translate("GroupBox", u"1", None))
         self.lineEdit_scatter_size.setPlaceholderText(QCoreApplication.translate("GroupBox", u"0 - 100", None))
+        self.radioButton_heatmap.setText(QCoreApplication.translate("GroupBox", u"heatmap", None))
         self.pushButton_save_jo.setText(QCoreApplication.translate("GroupBox", u"Data", None))
 #if QT_CONFIG(tooltip)
         self.pushButton_plot_jo.setToolTip(QCoreApplication.translate("GroupBox", u"<html><head/><body><p align=\"justify\">Compute the joint occupancy of the H bond network. The joint occupancy is true, if all H bonds of the network are present in a frame and false otherwise.</p></body></html>", None))
