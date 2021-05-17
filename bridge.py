@@ -982,7 +982,7 @@ starting n-terminal residue: {}\n\n\
             self.checkBox_selected_nodes.setChecked(True)
         
         self.close_open_filters()
-        self.interactive_graph.reset_selected_nodes()
+        if self.interactive_graph is not None: self.interactive_graph.reset_selected_nodes()
         self.label_current_filter.setText('current filter: ' + filter_description[str(self._current_filter)])
         if self.analysis is not None:
             self.apply_filters()

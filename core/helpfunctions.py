@@ -458,6 +458,21 @@ def get_resid(node):
 def get_resids(nodes):
     return [get_resid(node) for node in nodes]
 
+def sort_nodes(nodes):
+    segnames = np.sort(np.unique(get_segnames(nodes)))
+    nodes_per_segname = {segname:[] for segname in segnames}
+    for node in nodes:
+        for segname in segnames:
+            if node.startswith(segname): 
+                nodes_per_segname[segname].append(node)
+                continue
+    sor = []
+    for segname in segnames:
+        resids = get_resids(nodes_per_segname[segname])
+        ind = np.argsort(resids)
+        sor += [nodes_per_segname[segname][i] for i in ind]
+    return sor
+
 def biological_centrality_2(graph, normalize=False):
     centrality = {node:0.01 for node in graph}
     """

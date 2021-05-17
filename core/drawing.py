@@ -162,7 +162,7 @@ def heatmap(data, xresidues, yresidues, title):
     ax = fig.add_subplot(111)
     ax.set_xlabel('residues', fontsize = 16)
     ax.set_ylabel('residues', fontsize = 16)
-    im = ax.imshow(data)
+    im = ax.imshow(data, cmap='plasma')
     cbar = ax.figure.colorbar(im, ax=ax)
     cbar.ax.set_ylabel('Occupancy', rotation=-90, va="bottom")
     ax.set_xticks(np.arange(len(xresidues)))

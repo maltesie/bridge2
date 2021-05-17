@@ -5,7 +5,7 @@ from PySide2.QtWidgets import (QGroupBox, QVBoxLayout, QHBoxLayout, QFileDialog,
      QCheckBox, QSpacerItem, QSizePolicy, QPushButton, QLabel, QLineEdit, QRadioButton)
 
 from core.helpfunctions import (Error, get_segnames, get_resids, rgb_to_string, 
-     histogram_to_string, string_in_columns)
+     histogram_to_string, string_in_columns, sort_nodes)
 from core.drawing import (histogram, multi_histogram, boolean_scatter, timeseries,
                           multi_timeseries, heatmap)
 from itertools import combinations
@@ -143,10 +143,8 @@ def plot_jo():
             a, b = key.split(':')
             occ = result.mean()
             occupancies[a][b] = occupancies[b][a] = occ
-        resids = get_resids(nodes)
-        ind = np.argsort(resids)
-        nodes = [nodes[i] for i in ind]
-        data = np.array([[occupancies[node][othernode] for node in nodes] for othernode in nodes[::-1]])
+        nodes = sort_nodes(nodes)
+        data = np.array([[occupancies[node][othernode] for node in nodes] for othernode in nodes[::-1]]) * 100
         heatmap(data, nodes, nodes[::-1], 'Joint Occupancy: '+str(np.round(ts.mean()*100,1)))
         
 
