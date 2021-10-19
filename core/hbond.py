@@ -84,9 +84,8 @@ class HbondAnalysis(NetworkAnalysis):
             else: frame_res = [self._all_ids_atomwise[i] + ':' + self._all_ids_atomwise[j] if check[ii] else self._all_ids_atomwise[j] + ':' + self._all_ids_atomwise[i] for ii, (i, j) in enumerate(sorted_bonds)]
             
             for bond in frame_res:
-                if not self.check_angle:
-                    a, b = bond.split(':')
-                    if a.split('-')[:3] == b.split('-')[:3]: continue
+                a, b = bond.split(':')
+                if self.residuewise and (a.split('-')[:3] == b.split('-')[:3]): continue
                 try:
                     result[bond][frame_count] = True
                 except:
@@ -126,9 +125,8 @@ class HbondAnalysis(NetworkAnalysis):
             else: frame_res = [self._all_ids_atomwise[i] + ':' + self._all_ids_atomwise[j] if check[ii] else self._all_ids_atomwise[j] + ':' + self._all_ids_atomwise[i] for ii, (i, j) in enumerate(sorted_bonds)]
             
             for bond in frame_res:
-                if not self.check_angle:
-                    a, b = bond.split(':')
-                    if a.split('-')[:3] == b.split('-')[:3]: continue
+                a, b = bond.split(':')
+                if a == b: continue
                 try:
                     result[bond][frame_count] = True
                 except:
@@ -180,9 +178,8 @@ class HbondAnalysis(NetworkAnalysis):
             else: frame_res = [self._all_ids_atomwise[i] + ':' + self._all_ids_atomwise[j] if check[ii] else self._all_ids_atomwise[j] + ':' + self._all_ids_atomwise[i] for ii, (i, j) in enumerate(sorted_bonds)]
             
             for bond in frame_res:
-                if not self.check_angle:
-                    a, b = bond.split(':')
-                    if a.split('-')[:3] == b.split('-')[:3]: continue
+                a, b = bond.split(':')
+                if a == b: continue
                 try:
                     result[bond][frame_count] = True
                 except:
@@ -246,9 +243,8 @@ class HbondAnalysis(NetworkAnalysis):
             else: frame_res = [self._all_ids_atomwise[i] + ':' + self._all_ids_atomwise[j] if check[ii] else self._all_ids_atomwise[j] + ':' + self._all_ids_atomwise[i] for ii, (i, j) in enumerate(sorted_bonds)]
             
             for bond in frame_res:
-                if not self.check_angle:
-                    a, b = bond.split(':')
-                    if a.split('-')[:3] == b.split('-')[:3]: continue
+                a, b = bond.split(':')
+                if a == b: continue
                 try:
                     result[bond][frame_count] = True
                 except:
@@ -283,9 +279,8 @@ class HbondAnalysis(NetworkAnalysis):
             if self.residuewise: frame_res = [self._all_ids[i] + ':' + self._all_ids[j] if check[ii] else self._all_ids[j] + ':' + self._all_ids[i] for ii, (i, j) in enumerate(sorted_bonds)]
             
             for bond in frame_res:
-                if not self.check_angle:
-                    a, b = bond.split(':')
-                    if a.split('-')[:3] == b.split('-')[:3]: continue
+                a, b = bond.split(':')
+                if a == b: continue
                 try:
                     result[bond][frame_count] = True
                 except:

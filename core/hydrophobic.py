@@ -102,7 +102,7 @@ class HydrophobicAnalysis(NetworkAnalysis):
             
             for contact in frame_res:
                 a, b = contact.split(':')
-                if a.split('-')[:3] == b.split('-')[:3]: continue
+                if a == b: continue
                 try:
                     result[contact][frame_count] = True
                 except:

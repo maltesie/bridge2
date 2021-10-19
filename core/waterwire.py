@@ -35,7 +35,6 @@ import MDAnalysis as _MDAnalysis
 from scipy import spatial as _sp
 from scipy.sparse import csr_matrix
 from scipy.sparse.csgraph import dijkstra
-import time
 
 class WireAnalysis(NetworkAnalysis):
     
