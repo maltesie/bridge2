@@ -158,11 +158,12 @@ class WireAnalysis(NetworkAnalysis):
                     length = lengths[target_water][length_index]
                     wire = uniques[[_hf.predecessor_recursive_1d(ii, predecessors, target_water[length_index]) for ii in range(int(length))[::-1]]+[target]]
                     ai, bi = _np.sort(uniques[[source, target]])
+                    if self.residuewise: aname, bname = self._all_ids[ai], self._all_ids[bi]
+                    else: wire_info = aname, bname = self._all_ids_atomwise[ai], self._all_ids_atomwise[bi]
+                    if aname == bname: continue
                     wire_hash = hash(wire.tobytes())
                     hash_table[wire_hash] = wire
-                    if self.residuewise: wire_info = ':'.join(sorted([self._all_ids[ai], self._all_ids[bi]]))
-                    else: wire_info = ':'.join(sorted([self._all_ids_atomwise[ai], self._all_ids_atomwise[bi]]))
-                        
+                    wire_info = ':'.join(sorted([aname, bname]))
                     try:
                         distances[wire_info][frame_count] = length
                         path_hashs[wire_info][frame_count] = wire_hash
@@ -174,9 +175,11 @@ class WireAnalysis(NetworkAnalysis):
                 already_checked.append(source)
             
             if allow_direct_bonds:
-                for a, b in da_hbonds:
-                    if self.residuewise: wire_info = ':'.join(sorted([self._all_ids_atomwise[ai], self._all_ids_atomwise[bi]]))
-                    else: wire_info = ':'.join(sorted([self._all_ids[ai], self._all_ids[bi]]))
+                for ai, bi in da_hbonds:
+                    if self.residuewise: aname, bname = self._all_ids[ai], self._all_ids[bi]
+                    else: aname, bname = self._all_ids_atomwise[ai], self._all_ids_atomwise[bi]
+                    if aname == bname: continue
+                    wire_info = ':'.join(sorted([aname, bname]))
                     try:
                         path_hashs[wire_info][frame_count] = -1
                         distances[wire_info][frame_count] = 0
@@ -291,12 +294,14 @@ class WireAnalysis(NetworkAnalysis):
                     
                     for target, last_water in local_hbonds[all_targets_index]:
         
-                        if target in already_checked or target in already_checked_targets or self._all_ids[source]==self._all_ids[target]: continue
+                        if target in already_checked or target in already_checked_targets: continue
+                        if self.residuewise: sourcename, targetname = self._all_ids[source], self._all_ids[target]
+                        else: sourcename, targetname = self._all_ids_atomwise[source], self._all_ids_atomwise[target]
+                        if sourcename == targetname: continue
                         wire = paths[last_water] + [target]
                         wire_hash = hash(str(wire))
                         this_frame_table[wire_hash] = wire
-                        if self.residuewise: wire_info = ':'.join(sorted([self._all_ids[source], self._all_ids[target]]))
-                        else: wire_info = ':'.join(sorted([self._all_ids_atomwise[source], self._all_ids_atomwise[target]]))
+                        wire_info = ':'.join(sorted([sourcename, targetname]))
                         water_in_wire = len(wire)-2
                         
                         if self.residuewise:
@@ -317,8 +322,10 @@ class WireAnalysis(NetworkAnalysis):
             
             if allow_direct_bonds:
                 for source, target in da_hbonds:
-                    if self.residuewise: wire_info = ':'.join(sorted([self._all_ids[source], self._all_ids[target]]))
-                    else: wire_info = ':'.join(sorted([self._all_ids_atomwise[source], self._all_ids_atomwise[target]]))
+                    if self.residuewise: sourcename, targetname = self._all_ids[source], self._all_ids[target]
+                    else: sourcename, targetname = self._all_ids_atomwise[source], self._all_ids_atomwise[target]
+                    if sourcename == targetname: continue
+                    wire_info = ':'.join(sorted([sourcename, targetname]))
                     try:
                         intervals_results[wire_info][frame_count] = -1
                         results[wire_info][frame_count] = 0
