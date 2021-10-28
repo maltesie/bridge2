@@ -14,16 +14,10 @@ Author: Malte Siemers, Freie Universität Berlin
 
 If you use this software or anything it produces for work to be published, please cite:
 
-Malte Siemers, Michalis Lazaratos, Konstantina Karathanou, Federico Guerra, Leonid
-Brown, and Ana-Nicoleta Bondar. Bridge: A graph-based algorithm to analyze dynamic H-
-bond networks in membrane proteins, Journal of Chemical Theory and Computation 2019,
-15 (12) 6781-6798
 
-and
-
-Federico Guerra, Malte Siemers, Christopher Mielack, and Ana-Nicoleta Bondar. Dynamics of
-Long-Distance Hydrogen-Bond Networks in Photosystem II, The Journal of Physical
-Chemistry B 2018 122 (17), 4625-4641
+Malte Siemers and Ana-Nicoleta Bondar. Interactive Interface for Graph-Based Analyses 
+of Dynamic H-Bond Networks: Application to Spike Protein S, Journal of Chemical Information 
+and Modeling 2021 61 (6), 2998-3014, DOI: 10.1021/acs.jcim.1c00306 
 
 ## Installation guide
 
