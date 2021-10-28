@@ -325,6 +325,7 @@ class NewAnalysisDialog(QDialog, Ui_NewAnalysisDialog):
         Error(message)
         self.main_window.statusbar.showMessage('Failed Initialization!')
         self.main_window.working = False
+        self.show()
     
     def compute_initial_state(self, **kwargs):
         hb_selection = self.radio_in_selection.isChecked()
@@ -814,6 +815,7 @@ starting n-terminal residue: {}\n\n\
         
         segnames, resnames = self.analysis.get_segnames_and_resnames()
         self.comboBox_segnames.addItems(sorted(segnames))
+        self._segname_colors = {}
         for i in range(self.comboBox_segnames.count()):
             segname = self.comboBox_segnames.itemText(i)
             if segname not in self._segname_colors: self._segname_colors[self.comboBox_segnames.itemText(i)] = default_colors[i]
