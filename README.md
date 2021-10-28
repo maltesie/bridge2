@@ -72,7 +72,8 @@ titled "Layout", "Filters" and "Computations and Plots".
 
 The "Layout" tab allows for graphical settings such as colors or descriptions for nodes and
 edges. Here, it is possible to visualize the degree centrality or the betweenness centrality
-by coloring the nodes respectively.
+by coloring the nodes respectively. It is generally possible to move nodes by dragging them
+across the canvas to allow for custom positioning.
 
 ### Applying filters
 
