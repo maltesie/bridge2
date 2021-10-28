@@ -1,25 +1,42 @@
 # Bridge2
 
-## Copyright notice and disclaimer
+This program aims to provide an interactive tool to analyze haydrogen bonds and hydrophobic
+interactions in crystal structures and Molecular Dynamics (MD) simulations. It is compatible 
+with structures and trajectories that can be accessed with [MDAnalysis](https://userguide.mdanalysis.org/1.0.0/formats/index.html).
 
-This program is free software: you can redistribute it and/or modify it under the terms of
-the GNU General Public License as published by the Free Software Foundation, either
-version 3 of the License, or (at your option) any later version.
+## Usage
 
-This program is distributed in the hope that it will be useful, but WITHOUT ANY
-WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
-PARTICULAR PURPOSE. See the GNU General Public License for more details.
-You should have received a copy of the GNU General Public License along with this
-program. If not, see https://www.gnu.org/licenses/.
+The usual analysis is split into 4 steps:
 
-Author: Malte Siemers, Freie Universität Berlin
+### Initializing the analysis
 
-If you use this software or anything it produces for work to be published, please cite:
+After clicking the "New Analysis" icon in the top left menu, the "New Analysis" dialog opens
+and all parameters for the new analysis, such as the input files and the algorithm of interest,
+can be set. Bridge2 then computes a portable set of information from the input files that can
+be saved and opened without the necessity of having the trajectory or structure files. This step
+is computationally costly and can take a long time for long trajectories. The progress is
+indicated in the lower left corner. When done, an analysis summary can be saved under the
+"File" menu. After the graph of interactions (H-bonds, water wires or hydrophobic interactions) 
+becomes visible in the main window, the three tool tabs on the right can be used. They are 
+titled "Layout", "Filters" and "Computations and Plots". 
 
+### Setting the layout
 
-Malte Siemers and Ana-Nicoleta Bondar. Interactive Interface for Graph-Based Analyses 
-of Dynamic H-Bond Networks: Application to Spike Protein S, Journal of Chemical Information 
-and Modeling 2021 61 (6), 2998-3014, DOI: 10.1021/acs.jcim.1c00306 
+The "Layout" tab allows for graphical settings such as colors or descriptions for nodes and
+edges. Here, it is possible to visualize the degree centrality or the betweenness centrality
+by coloring the nodes respectively.
+
+### Applying filters
+
+In the "Filters" tab several restrictions can be defined to filter for interactions of interest.
+If a field requests a node name it is always possible to click into that field and then on the
+node of interest. Here, shortest paths or connected components can be computed or the graph
+can be reduced to hand-picked nodes of interest.
+
+### Computations and Plots
+
+This tab contains additional computational plugins that aim to produce plots on statistical
+properties of interactions in MD simulations or to further visualize centrality measures.
 
 ## Installation guide
 
@@ -34,7 +51,6 @@ virtual environment or conda environment before the installation.
 #### 1.a Linux (Ubuntu/Debian)
 
 > sudo apt-get install qt5-default build-essential python3-dev python3-venv
-
 
 #### 1.b macOS
 
@@ -65,3 +81,26 @@ You can now run Bridge2 using the following command:
 ### 3 Reinstall or update Bridge2
 
 If you install a new version of Bridge2, delete your old installation folder, unpack the new archive, cd into the new bridge2 folder and follow the instructions under step 2.
+
+## Copyright notice and disclaimer
+
+This program is free software: you can redistribute it and/or modify it under the terms of
+the GNU General Public License as published by the Free Software Foundation, either
+version 3 of the License, or (at your option) any later version.
+
+This program is distributed in the hope that it will be useful, but WITHOUT ANY
+WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+PARTICULAR PURPOSE. See the GNU General Public License for more details.
+You should have received a copy of the GNU General Public License along with this
+program. If not, see https://www.gnu.org/licenses/.
+
+Author: Malte Siemers, Freie Universität Berlin
+
+If you use this software or anything it produces for work to be published, please cite:
+
+
+Malte Siemers and Ana-Nicoleta Bondar. Interactive Interface for Graph-Based Analyses 
+of Dynamic H-Bond Networks: Application to Spike Protein S, Journal of Chemical Information 
+and Modeling 2021 61 (6), 2998-3014, DOI: 10.1021/acs.jcim.1c00306 
+
+
