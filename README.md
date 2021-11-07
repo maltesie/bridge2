@@ -25,7 +25,7 @@ virtual environment or conda environment before the installation.
 
 To install all necessary dependencies, you can run the provided install script:
 
-> bash setup_rhel
+> bash setup_rhel8
 
 After this, you can directly run the bridge script and do not need to run the update script.
 
