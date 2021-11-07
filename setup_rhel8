@@ -1,0 +1,25 @@
+#!/bin/bash
+sudo dnf -y install wget yum-utils make gcc openssl-devel bzip2-devel libffi-devel zlib-devel sqlite-devel libxcb xcb-util-wm xcb-util-image xcb-util-keysyms xcb-util-renderutil
+sudo dnf -y groupinstall "Development Tools"
+
+if command -v python3.9 > /dev/null
+then
+    echo "skipping python3.9 install..."
+else
+    wget https://www.python.org/ftp/python/3.9.6/Python-3.9.6.tgz 
+    tar xzf Python-3.9.6.tgz 
+    cd Python-3.9.6
+    sudo ./configure --with-system-ffi --with-computed-gotos --enable-loadable-sqlite-extensions 
+    sudo make -j 2
+    sudo make altinstall
+    cd ..
+    rm Python-3.9.6.tgz 
+    sudo rm -rf Python-3.9.6/
+fi
+
+python3.9 -m venv python3env
+source ./python3env/bin/activate
+pip install --upgrade pip
+pip install --no-cache-dir -r requirements.txt
+deactivate
+
