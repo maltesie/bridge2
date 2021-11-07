@@ -25,7 +25,9 @@ virtual environment or conda environment before the installation.
 
 To install all necessary dependencies, you can run the provided install script:
 
-> bash rhel_dependencies
+> bash setup_rhel
+
+After this, you can directly run the bridge script and do not need to run the update script.
 
 #### 1.c macOS
 
