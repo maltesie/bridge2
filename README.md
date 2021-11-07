@@ -19,9 +19,15 @@ virtual environment or conda environment before the installation.
 
 #### 1.a Linux (Ubuntu/Debian)
 
-> sudo apt-get install qt5-default build-essential python3-dev python3-venv
+> sudo apt-get install libxcb-xinerama0 build-essential python3-dev python3-venv
 
-#### 1.b macOS
+#### 1.b Linux (RHEL 8)
+
+To install all necessary dependencies, you can run the provided install script:
+
+> bash rhel_dependencies
+
+#### 1.c macOS
 
 In order to install the required software for Bridge2 to work, we recommend using the 
 Homebrew package manager. The later commands assume it is installed on your system. You can
