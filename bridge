@@ -1,3 +1,14 @@
 #!/bin/bash
-source ./python3env/bin/activate
+
+if [ -d ./python3env ]
+then
+  source ./python3env/bin/activate
+else
+  python3 -m venv python3env
+  source ./python3env/bin/activate
+  pip install --no-cache-dir --update pip
+  pip install --no-cache-dir -r requirements.txt
+fi
+
 python3 'bridge.py'
+deactivate
