@@ -1,6 +1,5 @@
 #!/bin/bash
-sudo dnf -y install wget yum-utils make gcc openssl-devel bzip2-devel libffi-devel zlib-devel sqlite-devel libxcb xcb-util-wm xcb-util-image xcb-util-keysyms xcb-util-renderutil
-sudo dnf -y groupinstall "Development Tools"
+sudo dnf -y install wget yum-utils make gcc gcc-c++ openssl-devel bzip2-devel libffi-devel zlib-devel sqlite-devel libxcb xcb-util-wm xcb-util-image xcb-util-keysyms xcb-util-renderutil
 
 if command -v python3.9 > /dev/null
 then
