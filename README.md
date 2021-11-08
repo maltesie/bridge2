@@ -27,8 +27,6 @@ To install all necessary dependencies, you can run the provided install script:
 
 > bash setup_rhel8
 
-After this, you can directly run the bridge script and do not need to run the update script.
-
 #### 1.c macOS
 
 In order to install the required software for Bridge2 to work, we recommend using the 
@@ -46,18 +44,15 @@ Then install the prerequisites:
 
 ### 2 Setup and run Bridge2
 
-Then run the setup script that comes with bridge:
-
-> ./setup
-
-This will create a python virtual environment containing all the necessary packages.
-You can now run Bridge2 using the following command:
+Then run the bridge script:
 
 > ./bridge
 
+This will create a python virtual environment containing all the necessary packages and start bridge2 then. If you have any problems with python packages bridge is depending on, please remove the python3env folder to reinstall the virtual environment the next time the bridge script is run.
+
 ### 3 Reinstall or update Bridge2
 
-If you install a new version of Bridge2, delete your old installation folder, unpack the new archive, cd into the new bridge2 folder and follow the instructions under step 2.
+If you install a new version of Bridge2, delete your old installation folder and use the new downloaded version instead.
 
 
 ## Usage
