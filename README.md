@@ -8,11 +8,12 @@ publication with an examplatory application can be found [here](https://pubs.acs
 
 ## Installation guide
 
-This is a standalone version of Bridge2. It is written in Python3 and Qt5 and depends on Qt5
-(5.14.1+) and the python packages MDAnalysis (0.19.2+) and PySide2 (5.14.1+). After installing 
-the dependencies you can use the setup script to create a virtual environment with the 
-necessary python packages in your bridge folder. IMPORTANT: Remember to deactivate any other
-virtual environment or conda environment before the installation.
+This is a standalone version of Bridge2. It is written in Python3 (3.7+) and Qt5 and depends 
+on Qt5 (5.14.1+) and the python packages MDAnalysis (0.19.2+) and PySide2 (5.14.1+). 
+After installing  the dependencies you can use the setup script to create a virtual environment 
+with the  necessary python packages in your bridge folder. 
+
+IMPORTANT: Deactivate any other virtual environment or conda environment before the installation.
 
 
 ### 1 Install dependencies
@@ -48,11 +49,15 @@ Then run the bridge script:
 
 > ./bridge
 
-This will create a python virtual environment containing all the necessary packages and start bridge2 then. If you have any problems with python packages bridge is depending on, please remove the python3env folder to reinstall the virtual environment the next time the bridge script is run.
+This will create a python virtual environment containing all the necessary packages and start 
+Bridge2 then. If you have any problems with python packages bridge is depending on, please 
+remove the python3env folder to reinstall the virtual environment the next time the bridge 
+script is run.
 
 ### 3 Reinstall or update Bridge2
 
-If you install a new version of Bridge2, delete your old installation folder and use the new downloaded version instead.
+If you install a new version of Bridge2, delete your old installation folder and use the new 
+downloaded version instead.
 
 
 ## Usage
