@@ -25,7 +25,7 @@ virtual environment or conda environment before the installation.
 
 To install all necessary dependencies, you can run the provided install script:
 
-> bash setup_rhel8
+> bash rhel8_dependencies
 
 #### 1.c macOS
 
