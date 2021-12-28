@@ -6,7 +6,7 @@ then
 else
   python3 -m venv python3env
   source ./python3env/bin/activate
-  pip install --no-cache-dir --update pip
+  pip install --no-cache-dir --upgrade pip
   pip install --no-cache-dir -r requirements.txt
 fi
 
