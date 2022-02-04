@@ -348,7 +348,7 @@ class WireAnalysis(NetworkAnalysis):
         endurance_times = {}
         for bond in results:
             hashs = self.hashs[bond]
-            endurance_time = _np.diff(list(_hf.pairwise(_np.hstack(([0], _np.nonzero(_np.diff(hashs))[0] + 1, [self.nb_frames])))), axis=1)
+            endurance_time = _np.diff(_np.hstack(([0], _np.nonzero(_np.diff(hashs))[0] + 1, [self.nb_frames])))
             endurance_times[bond] = endurance_time.max()
         if as_labels: 
             if frame_time is not None:
