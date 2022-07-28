@@ -13,22 +13,25 @@ on Qt5 (5.14.1+) and the python packages MDAnalysis (0.19.2+) and PySide2 (5.14.
 After installing  the dependencies you can use the setup script to create a virtual environment 
 with the  necessary python packages in your bridge folder. 
 
-IMPORTANT: Deactivate any other virtual environment or conda environment before the installation.
-
+#### IMPORTANT: Deactivate any other virtual environment or conda environment before the installation and before running bridge.
 
 ### 1 Install dependencies
 
-#### 1.a Linux (Ubuntu/Debian)
+#### 1.a Ubuntu/Debian
 
 > sudo apt-get install libxcb-xinerama0 build-essential python3-dev python3-venv
 
-#### 1.b Linux (RHEL 8)
+#### 1.b RHEL 8
 
 To install all necessary dependencies, you can run the provided install script:
 
 > bash rhel8_dependencies
 
-#### 1.c macOS
+#### 1.c Fedora
+
+> sudo dnf install python3-devel
+
+#### 1.d macOS
 
 In order to install the required software for Bridge2 to work, we recommend using the 
 Homebrew package manager. The later commands assume it is installed on your system. You can
@@ -41,7 +44,6 @@ Then install the prerequisites:
 > xcode-select --install
 
 > brew install qt5 python
-
 
 ### 2 Setup and run Bridge2
 
