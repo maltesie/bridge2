@@ -45,7 +45,7 @@ Then install the prerequisites:
 
 > brew install qt5 python
 
-### 2 Setup and run Bridge2
+### 2 Setup and run bridge2
 
 Then run the bridge script:
 
@@ -56,7 +56,7 @@ Bridge2 then. If you have any problems with python packages bridge is depending 
 remove the python3env folder to reinstall the virtual environment the next time the bridge 
 script is run.
 
-### 3 Reinstall or update Bridge2
+### 3 Reinstall or update bridge2
 
 If you install a new version of Bridge2, delete your old installation folder and use the new 
 downloaded version instead.
@@ -92,7 +92,7 @@ If a field requests a node name it is always possible to click into that field a
 node of interest. Here, shortest paths or connected components can be computed or the graph
 can be reduced to hand-picked nodes of interest.
 
-### Computations and Plots
+### Computations and plots
 
 This tab contains additional computational plugins that aim to produce plots on statistical
 properties of interactions in MD simulations or to further visualize centrality measures.
