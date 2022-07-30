@@ -32,6 +32,7 @@ import numpy as _np
 import networkx as _nx
 import MDAnalysis as _MDAnalysis
 from copy import deepcopy
+import concurrent.futures
 
 class NetworkAnalysis:
     
@@ -237,17 +238,10 @@ class NetworkAnalysis:
     def filter_to_frame(self, frame, use_filtered=True):
         _ = self._compute_graph_in_frame(frame, True, use_filtered)
     
-    def compute_centrality(self, centrality_type='betweenness', average_across_frames=True, use_filtered=True):
-        if use_filtered: graph = self.filtered_graph
-        else: graph = self.initial_graph
-        if average_across_frames: frames = self.nb_frames
-        else: frames = 1
-        #t0 = time.time()
-        centralities = {node:_np.zeros(frames) for node in graph.nodes()}
-        centralities_normalized = {node:_np.zeros(frames) for node in graph.nodes()}
-        for i in range(frames):
-            if average_across_frames: g_i = self._compute_graph_in_frame(i, use_filtered=use_filtered)
-            else: g_i = graph
+    def _centrality_per_frame_range(self, r, centrality_type, use_filtered):
+        centralities = []
+        for i in r:
+            g_i = self._compute_graph_in_frame(i, use_filtered=use_filtered)
             if centrality_type == 'betweenness': 
                 centrality_i = _nx.betweenness_centrality(g_i, normalized=False)
                 nb_nodes = len(centrality_i)
@@ -256,16 +250,34 @@ class NetworkAnalysis:
                 centrality_i = _nx.degree_centrality(g_i)
                 normalization_factor = len(centrality_i)
                 centrality_i = {key:value*normalization_factor for key, value in centrality_i.items()}
-            elif centrality_type == 'biological': 
-                centrality_i, normalization_factor = _hf.biological_centrality(g_i)
             else: 
                 raise AssertionError("centrality_type has to be 'betweenness' or 'degree' or 'biological'")
             if normalization_factor == 0: normalization_factor = 1.0
             centrality_normalized_i = {key:value/normalization_factor for key, value in centrality_i.items()}
+            centralities.append((i,centrality_i,centrality_normalized_i))
+        #print(time.time()-t0)
+        return centralities
+    
+    def compute_centrality(self, centrality_type='betweenness', average_across_frames=True, use_filtered=True, threads=6):
+        if use_filtered: graph = self.filtered_graph
+        else: graph = self.initial_graph 
+        if average_across_frames: frames = self.nb_frames
+        else: frames = 1
+        #t0 = time.time()
+        if self.progress_callback is not None: self.progress_callback.emit('Computing {} centrality'.format(centrality_type))
+        centralities = {node:_np.zeros(frames) for node in graph.nodes()}
+        centralities_normalized = {node:_np.zeros(frames) for node in graph.nodes()}
+        returns = []
+        
+        with concurrent.futures.ThreadPoolExecutor(max_workers=threads) as executor:
+            for r in _hf.partition(range(frames), max(10, int(frames/(threads-1)))):
+                returns += executor.submit(self._centrality_per_frame_range, r, centrality_type, use_filtered).result()
+        
+        for i, centrality_i, centrality_normalized_i in returns:
             for node in centrality_i: 
                 centralities[node][i] = centrality_i[node]
                 centralities_normalized[node][i] = centrality_normalized_i[node]
-            if self.progress_callback is not None: self.progress_callback.emit('Computing {} centrality in frame {}/{}'.format(centrality_type, i+1, self.nb_frames))
+            
         for node in centralities: 
             centralities[node] = _hf.round_to_1(centralities[node].mean())
             centralities_normalized[node] = _hf.round_to_1(centralities_normalized[node].mean())

@@ -633,3 +633,7 @@ def round_to_1(x):
         return round(x, -int(np.floor(np.log10(abs(x)))))
     else:
         return np.round(x, 1)
+    
+def partition(lst, size):
+    for i in range(0, len(lst), size):
+        yield lst[i : i+size]
