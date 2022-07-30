@@ -102,12 +102,12 @@ class NewAnalysisDialog(QDialog, Ui_NewAnalysisDialog):
         self.button_load.clicked.connect(self.init_new_analysis)
     
     def browse_filename_structure(self):
-        filename = QFileDialog.getOpenFileName(self, 'Open Structure File', filter='Structure File (*.psf *.pdb);;All Files (*.*)')[0]
+        filename = QFileDialog.getOpenFileName(self, 'Open Structure File', filter='All Files (*.*);;Structure File (*.psf *.pdb);;Batch File List (*.txt)')[0]
         if filename:
             self.line_bonds_structure.setText(filename)
     
     def browse_filename_trajectories(self):
-        filenames = QFileDialog.getOpenFileNames(self, 'Open Trajectory File(s)', filter='DCD File (*.dcd);;All Files (*.*)')[0]
+        filenames = QFileDialog.getOpenFileNames(self, 'Open Trajectory File(s)', filter='All Files (*.*);;DCD File (*.dcd);;Batch File List (*.txt)')[0]
         if filenames:
             fnames = ', '.join(filenames)
             self.line_bonds_trajectories.setText(fnames)
@@ -185,6 +185,20 @@ class NewAnalysisDialog(QDialog, Ui_NewAnalysisDialog):
                 return
         else:
             trajectories = None
+            
+        batch_mode = False
+        if structure.endswith(".txt"):
+            batch_mode = True
+            with open(structure) as f:
+                structure = [s.strip() for s in f.readlines()]
+            if trajectories == None:
+                trajectories = [None for i in range(len(structure))]
+            elif len(trajectories)==1 and trajectories[0].endswith(".txt"):
+                with open(trajectories[0]) as f:
+                    trajectories = [[ss.strip() for ss in s.strip().split(',')] if len(s.strip())>0 else None for s in f.readlines()]
+        else:
+            structure = [structure]
+            trajectories = [trajectories]
         
         add_donors = set(self.main_window.default_atoms_dialog.default_donors)
         add_acceptors = set(self.main_window.default_atoms_dialog.default_acceptors)
@@ -288,6 +302,7 @@ class NewAnalysisDialog(QDialog, Ui_NewAnalysisDialog):
         self.main_window._search_parameter = search_args 
         
         kwargs = {
+            'batch_mode':batch_mode,
             'structure':structure,
             'trajectories':trajectories,
             'selection':selection,
@@ -328,45 +343,54 @@ class NewAnalysisDialog(QDialog, Ui_NewAnalysisDialog):
         self.show()
     
     def compute_initial_state(self, **kwargs):
-        hb_selection = self.radio_in_selection.isChecked()
-        hb_around = self.radio_around.isChecked()
-        ww_dict = self.radio_wire_dict.isChecked()
-        hydrophobic = self.radioButton_hydrophobic_contacts.isChecked()
-        
-        search_args = self.main_window._search_parameter
-        
-        if ww_dict: 
-            self.main_window.analysis = WireAnalysis(**kwargs)
-            self.main_window._analysis_type = 'ww'
-        elif hydrophobic: 
-            kwargs = {'selection':kwargs['selection'], 'structure':kwargs['structure'], 
-                      'trajectories':kwargs['trajectories'], 'distance':search_args['hydrophobic_distance'], 
-                      'partially_hydrophobic_residues':search_args['partially_hydrophobic_residues'], 
-                      'start':kwargs['start'], 'stop':kwargs['stop'], 'step':kwargs['step'], 
-                      'residuewise':kwargs['residuewise'], 'progress_callback':kwargs['progress_callback']}
-            self.main_window.analysis = HydrophobicAnalysis(**kwargs)
-            self.main_window._analysis_type = 'hy'
-        elif (hb_selection | hb_around):
-            self.main_window.analysis = HbondAnalysis(**kwargs)
-            self.main_window._analysis_type = 'hb'
+        all_structure, all_trajectories = kwargs["structure"].copy(), kwargs["trajectories"].copy()
+        batch_mode = kwargs["batch_mode"]
+        del kwargs["batch_mode"]
+        for structure, trajectories in zip(all_structure, all_trajectories):
+            kwargs["structure"] = structure
+            kwargs["trajectories"] = trajectories
+            hb_selection = self.radio_in_selection.isChecked()
+            hb_around = self.radio_around.isChecked()
+            ww_dict = self.radio_wire_dict.isChecked()
+            hydrophobic = self.radioButton_hydrophobic_contacts.isChecked()
             
-        do_not_use_water_algorithm = (self.main_window.analysis.nb_frames > 100) and not (hb_around and self.main_window._search_parameter['not_water_water'])
-        include_water = hb_around
-        if do_not_use_water_algorithm and include_water: 
-            self.show()
-            raise AssertionError('Algorithm not supported! Including water in the search consumes too much memory for your trajectory length (> 100) or the number of water molecules (>1000)!')
-        
-        if hb_selection: self.main_window.analysis.set_hbonds_in_selection()
-        elif hb_around: self.main_window.analysis.set_hbonds_in_selection_and_water_around(around_radius=search_args['around'], not_water_water=search_args['not_water_water'])
-        elif ww_dict: self.main_window.analysis.set_water_wires(max_water=search_args['max_water'], allow_direct_bonds=search_args['allow_direct_bonds'], water_in_convex_hull=search_args['ww_in_hull'])
-        elif hydrophobic: self.main_window.analysis.set_hydrophobic_contacts_in_selection()
-        
-        self.main_window.analysis.add_missing_residues = int(self.lineEdit_add_residue.text())
-        self.main_window.analysis.set_node_positions_3d(include_water=include_water)
-        self.main_window.analysis.set_centralities()
-        self.main_window._active_filters = {}
-        self.main_window.current_filter = None
-        self.main_window.apply_filters()
+            search_args = self.main_window._search_parameter
+            
+            if ww_dict: 
+                self.main_window.analysis = WireAnalysis(**kwargs)
+                self.main_window._analysis_type = 'ww'
+            elif hydrophobic: 
+                kwargs_hydrophobic = {'selection':kwargs['selection'], 'structure':kwargs['structure'], 
+                          'trajectories':kwargs['trajectories'], 'distance':search_args['hydrophobic_distance'], 
+                          'partially_hydrophobic_residues':search_args['partially_hydrophobic_residues'], 
+                          'start':kwargs['start'], 'stop':kwargs['stop'], 'step':kwargs['step'], 
+                          'residuewise':kwargs['residuewise'], 'progress_callback':kwargs['progress_callback']}
+                self.main_window.analysis = HydrophobicAnalysis(**kwargs_hydrophobic)
+                self.main_window._analysis_type = 'hy'
+            elif (hb_selection | hb_around):
+                self.main_window.analysis = HbondAnalysis(**kwargs)
+                self.main_window._analysis_type = 'hb'
+                
+            do_not_use_water_algorithm = (self.main_window.analysis.nb_frames > 100) and not (hb_around and self.main_window._search_parameter['not_water_water'])
+            include_water = hb_around
+            if do_not_use_water_algorithm and include_water: 
+                self.show()
+                raise AssertionError('Algorithm not supported! Including water in the search consumes too much memory for your trajectory length (> 100) or the number of water molecules (>1000)!')
+            
+            if hb_selection: self.main_window.analysis.set_hbonds_in_selection()
+            elif hb_around: self.main_window.analysis.set_hbonds_in_selection_and_water_around(around_radius=search_args['around'], not_water_water=search_args['not_water_water'])
+            elif ww_dict: self.main_window.analysis.set_water_wires(max_water=search_args['max_water'], allow_direct_bonds=search_args['allow_direct_bonds'], water_in_convex_hull=search_args['ww_in_hull'])
+            elif hydrophobic: self.main_window.analysis.set_hydrophobic_contacts_in_selection()
+            
+            self.main_window.analysis.add_missing_residues = int(self.lineEdit_add_residue.text())
+            self.main_window.analysis.set_node_positions_3d(include_water=include_water)
+            self.main_window.analysis.set_centralities()
+            self.main_window._active_filters = {}
+            self.main_window.current_filter = None
+            self.main_window.apply_filters()
+            
+            if batch_mode:
+                self.main_window._save_analysis(structure + ".baf")
         
  
 class ResultsDialog(QDialog, Ui_ResultsDialog):
@@ -1335,7 +1359,7 @@ starting n-terminal residue: {}\n\n\
     def _save_analysis(self, filename):
         self._current_save_filename = filename
         self.analysis.prepare_for_pickling()
-        self.interactive_graph.set_current_pos()
+        if self.interactive_graph is not None: self.interactive_graph.set_current_pos()
         self._analysis_parameter['progress_callback'] = None
         self.close_open_filters()
         save_dict = {'analysis': self.analysis,
