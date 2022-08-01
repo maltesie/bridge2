@@ -327,12 +327,12 @@ class NetworkAnalysis:
         if as_labels: occupancies = {key:str(round(value*100)) for key, value in occupancies.items()}
         return occupancies
 
-    def set_centralities(self):
+    def set_centralities(self, threads=6):
         
-        betweenness_avg, betweenness_avg_norm = self.compute_centrality(centrality_type='betweenness', average_across_frames=True, use_filtered=False)
-        betweenness_tot, betweenness_tot_norm = self.compute_centrality(centrality_type='betweenness', average_across_frames=False, use_filtered=False)
-        degree_avg, degree_avg_norm = self.compute_centrality(centrality_type='degree', average_across_frames=True, use_filtered=False)
-        degree_tot, degree_tot_norm = self.compute_centrality(centrality_type='degree', average_across_frames=False, use_filtered=False)
+        betweenness_avg, betweenness_avg_norm = self.compute_centrality(centrality_type='betweenness', average_across_frames=True, use_filtered=False, threads=threads)
+        betweenness_tot, betweenness_tot_norm = self.compute_centrality(centrality_type='betweenness', average_across_frames=False, use_filtered=False, threads=threads)
+        degree_avg, degree_avg_norm = self.compute_centrality(centrality_type='degree', average_across_frames=True, use_filtered=False, threads=threads)
+        degree_tot, degree_tot_norm = self.compute_centrality(centrality_type='degree', average_across_frames=False, use_filtered=False, threads=threads)
         self.centralities = {'betweenness':{True:{True:betweenness_avg_norm, False:betweenness_avg},
                                             False:{True:betweenness_tot_norm, False:betweenness_tot}},
                              'degree':{True:{True:degree_avg_norm, False:degree_avg},

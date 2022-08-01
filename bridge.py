@@ -43,12 +43,13 @@ class DefaultAtomsDialog(QDialog, Ui_DefaultAtomsDialog):
         
     def load_atom_names(self):
         dir_path = os.path.dirname(os.path.realpath(__file__))
-        ini_file = dir_path + '/atom_names.ini'
+        ini_file = dir_path + '/settings.ini'
         if fc(ini_file):
             with open(ini_file, 'r') as f:
                 donors = f.readline()
                 acceptors = f.readline()
                 water_def = f.readline()
+                threads = int(f.readline().strip())
         else:
             donors = ', '.join(donor_names_global)
             acceptors = ', '.join(acceptor_names_global)
@@ -62,10 +63,11 @@ class DefaultAtomsDialog(QDialog, Ui_DefaultAtomsDialog):
         self.default_donors = {donor.strip() for donor in donors.split(',')}
         self.default_acceptors = {acceptor.strip() for acceptor in acceptors.split(',')}
         self.default_water = water_def
+        self.threads = threads
         
     def save(self):
         dir_path = os.path.dirname(os.path.realpath(__file__))
-        ini_file = dir_path + '/atom_names.ini'
+        ini_file = dir_path + '/settings.ini'
         donors = self.plainTextEdit_donors.toPlainText().strip().replace('\n', ' ')
         acceptors = self.plainTextEdit_acceptors.toPlainText().replace('\n', ' ')
         water_def = self.lineEdit_water.text()
@@ -203,6 +205,7 @@ class NewAnalysisDialog(QDialog, Ui_NewAnalysisDialog):
         add_donors = set(self.main_window.default_atoms_dialog.default_donors)
         add_acceptors = set(self.main_window.default_atoms_dialog.default_acceptors)
         water_def = self.main_window.default_atoms_dialog.default_water
+        threads = self.main_window.default_atoms_dialog.threads
         if consider_backbone:
             add_donors |= {'N'}
             add_acceptors |= {'O'}
@@ -317,7 +320,8 @@ class NewAnalysisDialog(QDialog, Ui_NewAnalysisDialog):
             'additional_acceptors':add_acceptors,
             'water_definition':water_def,
             'add_all_donor_acceptor':add_all_donor_acceptor,
-            'add_donors_without_hydrogen':crytal_structure
+            'add_donors_without_hydrogen':crytal_structure,
+            'threads':threads
             }
         
         self.main_window._analysis_parameter = kwargs
@@ -345,8 +349,10 @@ class NewAnalysisDialog(QDialog, Ui_NewAnalysisDialog):
     def compute_initial_state(self, **kwargs):
         all_structure, all_trajectories = kwargs["structure"].copy(), kwargs["trajectories"].copy()
         batch_mode = kwargs["batch_mode"]
+        threads = kwargs["threads"]
+        del kwargs["threads"]
         del kwargs["batch_mode"]
-        for structure, trajectories in zip(all_structure, all_trajectories):
+        for i, (structure, trajectories) in enumerate(zip(all_structure, all_trajectories)):
             kwargs["structure"] = structure
             kwargs["trajectories"] = trajectories
             hb_selection = self.radio_in_selection.isChecked()
@@ -384,13 +390,13 @@ class NewAnalysisDialog(QDialog, Ui_NewAnalysisDialog):
             
             self.main_window.analysis.add_missing_residues = int(self.lineEdit_add_residue.text())
             self.main_window.analysis.set_node_positions_3d(include_water=include_water)
-            self.main_window.analysis.set_centralities()
+            self.main_window.analysis.set_centralities(threads=threads)
             self.main_window._active_filters = {}
             self.main_window.current_filter = None
             self.main_window.apply_filters()
             
             if batch_mode:
-                self.main_window._save_analysis(structure + ".baf")
+                self.main_window._save_analysis(structure + ".batch{}.baf".format(i))
         
  
 class ResultsDialog(QDialog, Ui_ResultsDialog):
