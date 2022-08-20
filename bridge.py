@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*- test
+# -*- coding: utf-8 -*-
 #
 #    This program is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -389,7 +389,6 @@ class NewAnalysisDialog(QDialog, Ui_NewAnalysisDialog):
         all_structure, all_trajectories = kwargs["structure"].copy(), kwargs["trajectories"].copy()
         batch_mode = kwargs["batch_mode"]
         threads = kwargs["threads"]
-        del kwargs["threads"]
         del kwargs["batch_mode"]
         for i, (structure, trajectories) in enumerate(zip(all_structure, all_trajectories)):
             kwargs["structure"] = structure
@@ -429,7 +428,7 @@ class NewAnalysisDialog(QDialog, Ui_NewAnalysisDialog):
             
             self.main_window.analysis.add_missing_residues = int(self.lineEdit_add_residue.text())
             self.main_window.analysis.set_node_positions_3d(include_water=include_water)
-            self.main_window.analysis.set_centralities(threads=threads)
+            self.main_window.analysis.set_centralities()
             self.main_window._active_filters = {}
             self.main_window.current_filter = None
             self.main_window.apply_filters()

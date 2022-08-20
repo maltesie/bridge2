@@ -4,6 +4,7 @@ import networkx as _nx
 import MDAnalysis as _MDAnalysis
 from copy import deepcopy
 import concurrent.futures
+import time
 
 class NetworkAnalysis:
     
@@ -11,7 +12,7 @@ class NetworkAnalysis:
                  start=None, stop=None, step=1, residuewise=False, additional_donors=[], 
                  additional_acceptors=[], exclude_donors=[], exclude_acceptors=[], 
                  ions=[], check_angle=True, add_donors_without_hydrogen=False, 
-                 add_all_donor_acceptor=False, progress_callback=None, 
+                 add_all_donor_acceptor=False, progress_callback=None, threads=2,
                  water_definition=None, restore_filename=None):
         
         
@@ -19,6 +20,7 @@ class NetworkAnalysis:
         
         if selection==None: raise AssertionError('No selection string.')
         if structure==None: raise AssertionError('No structure file path.')
+        self._threads = threads
         self._selection = selection
         self._structure = structure
         self._trajectories = trajectories
@@ -229,7 +231,7 @@ class NetworkAnalysis:
         #print(time.time()-t0)
         return centralities
     
-    def compute_centrality(self, centrality_type='betweenness', average_across_frames=True, use_filtered=True, threads=6):
+    def compute_centrality(self, centrality_type='betweenness', average_across_frames=True, use_filtered=True):
         if use_filtered: graph = self.filtered_graph
         else: graph = self.initial_graph 
         if average_across_frames: frames = self.nb_frames
@@ -239,11 +241,12 @@ class NetworkAnalysis:
         centralities = {node:_np.zeros(frames) for node in graph.nodes()}
         centralities_normalized = {node:_np.zeros(frames) for node in graph.nodes()}
         returns = []
-        
-        with concurrent.futures.ThreadPoolExecutor(max_workers=threads) as executor:
-            for r in _hf.partition(range(frames), max(10, int(frames/(threads-1)))):
+        #print(self._threads)
+        with concurrent.futures.ThreadPoolExecutor(max_workers=self._threads) as executor:
+            for r in _hf.partition(range(frames), max(10, int(frames/(self._threads-1)))):
                 returns += executor.submit(self._centrality_per_frame_range, r, centrality_type, use_filtered).result()
-        
+            #returns += executor.submit(self._centrality_per_frame_range, range(frames), centrality_type, use_filtered).result()
+        #print('Time to compute threads {}s'.format(_np.round(time.time()-t0,5)))
         for i, centrality_i, centrality_normalized_i in returns:
             for node in centrality_i: 
                 centralities[node][i] = centrality_i[node]
@@ -298,12 +301,12 @@ class NetworkAnalysis:
         if as_labels: occupancies = {key:str(round(value*100)) for key, value in occupancies.items()}
         return occupancies
 
-    def set_centralities(self, threads=6):
+    def set_centralities(self):
         
-        betweenness_avg, betweenness_avg_norm = self.compute_centrality(centrality_type='betweenness', average_across_frames=True, use_filtered=False, threads=threads)
-        betweenness_tot, betweenness_tot_norm = self.compute_centrality(centrality_type='betweenness', average_across_frames=False, use_filtered=False, threads=threads)
-        degree_avg, degree_avg_norm = self.compute_centrality(centrality_type='degree', average_across_frames=True, use_filtered=False, threads=threads)
-        degree_tot, degree_tot_norm = self.compute_centrality(centrality_type='degree', average_across_frames=False, use_filtered=False, threads=threads)
+        betweenness_avg, betweenness_avg_norm = self.compute_centrality(centrality_type='betweenness', average_across_frames=True, use_filtered=False)
+        betweenness_tot, betweenness_tot_norm = self.compute_centrality(centrality_type='betweenness', average_across_frames=False, use_filtered=False)
+        degree_avg, degree_avg_norm = self.compute_centrality(centrality_type='degree', average_across_frames=True, use_filtered=False)
+        degree_tot, degree_tot_norm = self.compute_centrality(centrality_type='degree', average_across_frames=False, use_filtered=False)
         self.centralities = {'betweenness':{True:{True:betweenness_avg_norm, False:betweenness_avg},
                                             False:{True:betweenness_tot_norm, False:betweenness_tot}},
                              'degree':{True:{True:degree_avg_norm, False:degree_avg},

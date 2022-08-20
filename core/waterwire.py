@@ -13,7 +13,7 @@ class WireAnalysis(NetworkAnalysis):
                  start=None, stop=None, step=1, residuewise=False, additional_donors=[], 
                  additional_acceptors=[], exclude_donors=[], exclude_acceptors=[], 
                  ions=[], check_angle=True, add_donors_without_hydrogen=False, 
-                 add_all_donor_acceptor=False, progress_callback=None, 
+                 add_all_donor_acceptor=False, progress_callback=None, threads=2,
                  water_definition=None, restore_filename=None):
         
         super(WireAnalysis, self).__init__(selection=selection, structure=structure, trajectories=trajectories, 
@@ -21,7 +21,7 @@ class WireAnalysis(NetworkAnalysis):
              additional_donors=additional_donors, additional_acceptors=additional_acceptors,
              exclude_donors=exclude_donors, exclude_acceptors=exclude_acceptors,
              ions=ions, check_angle=check_angle, add_donors_without_hydrogen=add_donors_without_hydrogen, 
-             add_all_donor_acceptor=add_all_donor_acceptor, progress_callback=progress_callback,
+             add_all_donor_acceptor=add_all_donor_acceptor, progress_callback=progress_callback, threads=threads,
              restore_filename=restore_filename, residuewise=residuewise, water_definition=water_definition)
         
         if restore_filename != None: return
