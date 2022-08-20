@@ -48,34 +48,44 @@ class DefaultAtomsDialog(QDialog, Ui_DefaultAtomsDialog):
             with open(ini_file, 'r') as f:
                 donors = f.readline()
                 acceptors = f.readline()
-                water_def = f.readline()
+                water_def = f.readline().strip()
                 threads = int(f.readline().strip())
         else:
             donors = ', '.join(donor_names_global)
             acceptors = ', '.join(acceptor_names_global)
             water_def = water_definition
+            threads = 2
+            self.plainTextEdit_donors.setPlainText(donors)
+            self.plainTextEdit_acceptors.setPlainText(acceptors)
+            self.lineEdit_water.setText(water_def)
+            self.lineEdit_threads.setText(str(threads))
+            self.save()
         self.plainTextEdit_donors.clear()
         self.plainTextEdit_acceptors.clear()
         self.plainTextEdit_donors.setPlainText(donors)
         self.plainTextEdit_acceptors.setPlainText(acceptors)
         self.lineEdit_water.clear()
         self.lineEdit_water.setText(water_def)
+        self.lineEdit_threads.clear()
+        self.lineEdit_threads.setText(str(threads))
         self.default_donors = {donor.strip() for donor in donors.split(',')}
         self.default_acceptors = {acceptor.strip() for acceptor in acceptors.split(',')}
         self.default_water = water_def
         self.threads = threads
-        
+
     def save(self):
         dir_path = os.path.dirname(os.path.realpath(__file__))
         ini_file = dir_path + '/settings.ini'
         donors = self.plainTextEdit_donors.toPlainText().strip().replace('\n', ' ')
         acceptors = self.plainTextEdit_acceptors.toPlainText().replace('\n', ' ')
         water_def = self.lineEdit_water.text()
+        threads = self.lineEdit_threads.text()
         self.default_donors = {donor.strip() for donor in donors.split(',')}
         self.default_acceptors = {acceptor.strip() for acceptor in acceptors.split(',')}
         self.default_water = water_def
+        self.threads = int(threads)
         with open(ini_file, 'w') as f:
-            f.write(donors + '\n' + acceptors + '\n' + water_def)
+            f.write(donors + '\n' + acceptors + '\n' + water_def + '\n' + threads)
         self.close()
             
     def cancel(self):

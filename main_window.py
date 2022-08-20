@@ -3,16 +3,13 @@
 ################################################################################
 ## Form generated from reading UI file 'main_window.ui'
 ##
-## Created by: Qt User Interface Compiler version 5.15.0
+## Created by: Qt User Interface Compiler version 5.15.2
 ##
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
 
-from PySide2.QtCore import (QCoreApplication, QDate, QDateTime, QMetaObject,
-    QObject, QPoint, QRect, QSize, QTime, QUrl, Qt)
-from PySide2.QtGui import (QBrush, QColor, QConicalGradient, QCursor, QFont,
-    QFontDatabase, QIcon, QKeySequence, QLinearGradient, QPalette, QPainter,
-    QPixmap, QRadialGradient)
+from PySide2.QtCore import *
+from PySide2.QtGui import *
 from PySide2.QtWidgets import *
 
 import icons_rc
@@ -93,7 +90,7 @@ class Ui_MainWindow(object):
         self.toolBox.setMaximumSize(QSize(520, 16777215))
         self.toolBoxPage_layout = QWidget()
         self.toolBoxPage_layout.setObjectName(u"toolBoxPage_layout")
-        self.toolBoxPage_layout.setGeometry(QRect(0, 0, 520, 773))
+        self.toolBoxPage_layout.setGeometry(QRect(0, 0, 532, 738))
         self.verticalLayout_3 = QVBoxLayout(self.toolBoxPage_layout)
         self.verticalLayout_3.setObjectName(u"verticalLayout_3")
         self.groupBox_3 = QGroupBox(self.toolBoxPage_layout)
@@ -446,7 +443,7 @@ class Ui_MainWindow(object):
         self.toolBox.addItem(self.toolBoxPage_layout, u"Layout")
         self.toolBoxPage_filters = QWidget()
         self.toolBoxPage_filters.setObjectName(u"toolBoxPage_filters")
-        self.toolBoxPage_filters.setGeometry(QRect(0, 0, 458, 636))
+        self.toolBoxPage_filters.setGeometry(QRect(0, 0, 660, 738))
         self.verticalLayout_4 = QVBoxLayout(self.toolBoxPage_filters)
         self.verticalLayout_4.setObjectName(u"verticalLayout_4")
         self.verticalSpacer_6 = QSpacerItem(20, 20, QSizePolicy.Minimum, QSizePolicy.Fixed)
@@ -676,7 +673,7 @@ class Ui_MainWindow(object):
         self.toolBox.addItem(self.toolBoxPage_filters, u"Filters")
         self.toolBoxPage_computations = QWidget()
         self.toolBoxPage_computations.setObjectName(u"toolBoxPage_computations")
-        self.toolBoxPage_computations.setGeometry(QRect(0, 0, 210, 85))
+        self.toolBoxPage_computations.setGeometry(QRect(0, 0, 520, 752))
         self.verticalLayout_6 = QVBoxLayout(self.toolBoxPage_computations)
         self.verticalLayout_6.setObjectName(u"verticalLayout_6")
         self.horizontalLayout_11 = QHBoxLayout()
@@ -718,7 +715,7 @@ class Ui_MainWindow(object):
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QMenuBar(MainWindow)
         self.menubar.setObjectName(u"menubar")
-        self.menubar.setGeometry(QRect(0, 0, 1638, 22))
+        self.menubar.setGeometry(QRect(0, 0, 1638, 31))
         self.menuEdit = QMenu(self.menubar)
         self.menuEdit.setObjectName(u"menuEdit")
         self.menuHelp = QMenu(self.menubar)
@@ -778,7 +775,7 @@ class Ui_MainWindow(object):
         self.actionToolbar.setText(QCoreApplication.translate("MainWindow", u"Toolbar", None))
         self.actionQuit.setText(QCoreApplication.translate("MainWindow", u"Quit", None))
         self.actionAddComputationPlugin.setText(QCoreApplication.translate("MainWindow", u"Add computation plugin", None))
-        self.actionDefaultAtomNames.setText(QCoreApplication.translate("MainWindow", u"Default atom names", None))
+        self.actionDefaultAtomNames.setText(QCoreApplication.translate("MainWindow", u"Settings", None))
         self.actionShowAtoms.setText(QCoreApplication.translate("MainWindow", u"Current parameters", None))
         self.actionExport_Analysis_Summary.setText(QCoreApplication.translate("MainWindow", u"Export Analysis Summary", None))
         self.groupBox_3.setTitle(QCoreApplication.translate("MainWindow", u"Projection plane", None))
