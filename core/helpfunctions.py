@@ -1,32 +1,3 @@
-#    This program is free software: you can redistribute it and/or modify
-#    it under the terms of the GNU General Public License as published by
-#    the Free Software Foundation, either version 3 of the License, or
-#    (at your option) any later version.
-#
-#    This program is distributed in the hope that it will be useful,
-#    but WITHOUT ANY WARRANTY; without even the implied warranty of
-#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#    GNU General Public License for more details.
-#
-#    You should have received a copy of the GNU General Public License
-#    along with this program.  If not, see <https://www.gnu.org/licenses/>.
-#
-#    Author: Malte Siemers, Freie Universität Berlin 
-#   
-#    If you use this software or anything it produces for work to be published,
-#    please cite:
-#    
-#    Malte Siemers, Michalis Lazaratos, Konstantina Karathanou,
-#    Federico Guerra, Leonid Brown, and Ana-Nicoleta Bondar. 
-#    Bridge: A graph-based algorithm to analyze dynamic H-bond networks in
-#    membrane proteins, Journal of Chemical Theory and Computation 15 (12) 6781-6798
-#
-#    and
-#
-#    Federico Guerra, Malte Siemers, Christopher Mielack, and Ana-Nicoleta Bondar
-#    Dynamics of Long-Distance Hydrogen-Bond Networks in Photosystem II
-#    The Journal of Physical Chemistry B 2018 122 (17), 4625-4641
-
 import numpy as np
 import copy
 import MDAnalysis
