@@ -781,8 +781,8 @@ starting n-terminal residue: {}\n\n\
                 self.new_analysis_dialog.checkBox_frame_time.setChecked(True)
             
             self.new_analysis_dialog.lineEdit_add_residue.setText(str(add_residues))
-            self.new_analysis_dialog.line_bonds_structure.setText(structure)
-            self.new_analysis_dialog.line_bonds_trajectories.setText(', '.join(trajectories))
+            self.new_analysis_dialog.line_bonds_structure.setText(structure[-1])
+            self.new_analysis_dialog.line_bonds_trajectories.setText(', '.join(trajectories[-1]))
             self.new_analysis_dialog.line_bonds_selection.setText(selection)
             self.new_analysis_dialog.line_bonds_start.setText(str(start))
             self.new_analysis_dialog.line_bonds_step.setText(str(step))
@@ -892,7 +892,7 @@ starting n-terminal residue: {}\n\n\
         self.radioButton_colors.setChecked(True)
         self.checkBox_bonds_occupancy.setChecked(False)
         self.checkBox_bonds_graph_labels.setChecked(True)
-        self.checkBox_color_legend.setChecked(False)
+        self.checkBox_color_legend.setChecked(True)
         
         self.comboBox_filter_segna.clear()
         self.comboBox_filter_segnb.clear()
