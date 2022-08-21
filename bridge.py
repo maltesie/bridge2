@@ -658,7 +658,8 @@ starting n-terminal residue: {}\n\n\
     
     def update_frame(self):
         if self.interactive_graph is None: return
-        self.label_frame.setText(str(self.horizontalSlider_frame.value()))
+        nb_samples = min(100, self.analysis.nb_frames)
+        self.label_frame.setText(str(np.linspace(1, self.analysis.nb_frames, nb_samples, dtype=int)[self.horizontalSlider_frame.value()]))
     
     def goto_github(self):
         webbrowser.open('https://github.com/maltesie/bridge')
@@ -879,7 +880,8 @@ starting n-terminal residue: {}\n\n\
         self.layout_interactive.addWidget(self.interactive_graph.canvas)
         self.interactive_graph.add_toolbar()
         
-        self.horizontalSlider_frame.setMaximum(self.analysis.nb_frames-1)
+        self.horizontalSlider_frame.setMaximum(min(99, self.analysis.nb_frames-1))
+        self.horizontalSlider_frame.setMinimum(0)
         
         segnames, resnames = self.analysis.get_segnames_and_resnames()
         self.comboBox_segnames.addItems(sorted(segnames))

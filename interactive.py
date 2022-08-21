@@ -399,7 +399,7 @@ class InteractiveMPLGraph:
         if self._parent.radioButton_rotation_xy.isChecked(): projection = 'XY'
         elif self._parent.radioButton_rotation_zy.isChecked(): projection = 'ZY'
         adjust_water = False
-        frame = int(self._parent.label_frame.text())
+        frame = self._parent.horizontalSlider_frame.value()
         positions = self._parent.analysis.get_node_positions_2d(projection=projection, in_frame=frame, adjust_water_positions=adjust_water)
         
         all_pos = np.array([positions[key] for key in positions])

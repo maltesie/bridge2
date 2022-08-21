@@ -321,18 +321,19 @@ class NetworkAnalysis:
         if self.residuewise: all_id = _np.array(self._all_ids)
         else: all_id = _np.array(self._all_ids_atomwise)
         if not include_water: all_id = all_id[:self._first_water_id]
+        nb_samples = min(100, self.nb_frames)
         #t = time.time()
-        for in_frame in range(self.nb_frames):  
-            if self.progress_callback is not None: self.progress_callback.emit('Extracting positional information from frame {}/{}'.format(in_frame, self.nb_frames))
+        for i, in_frame in enumerate(_np.linspace(0, self.nb_frames-1, nb_samples, dtype=int)):  
+            if self.progress_callback is not None: self.progress_callback.emit('Extracting positional information from frame {}'.format(in_frame))
             self._universe.trajectory[in_frame]
             if include_water: all_coordinates = _np.vstack((self._da_selection.positions, self._water.positions.reshape((-1,3))))
             else: all_coordinates = _np.array(self._da_selection.positions)
             for node in nodes:
                 try:
-                    self._node_positions_3d[node][in_frame] = all_coordinates[all_id == node].mean(0)
+                    self._node_positions_3d[node][i] = all_coordinates[all_id == node].mean(0)
                 except KeyError:
-                    self._node_positions_3d[node] = _np.empty((self.nb_frames, 3))
-                    self._node_positions_3d[node][in_frame] = all_coordinates[all_id == node].mean(0)
+                    self._node_positions_3d[node] = _np.empty((nb_samples, 3))
+                    self._node_positions_3d[node][i] = all_coordinates[all_id == node].mean(0)
         #print(time.time()-t)
         if self.progress_callback is not None: self.progress_callback.emit('Done!')
         
