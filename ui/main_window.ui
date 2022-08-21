@@ -415,19 +415,12 @@
                  <number>0</number>
                 </property>
                 <item>
-                 <widget class="QCheckBox" name="checkBox_centralities_norm">
-                  <property name="text">
-                   <string>normalized</string>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QCheckBox" name="checkBox_centralities_avg">
-                  <property name="text">
-                   <string>averaged across frames</string>
-                  </property>
-                  <property name="checked">
+                 <widget class="QRadioButton" name="radioButton_betweenness">
+                  <property name="enabled">
                    <bool>true</bool>
+                  </property>
+                  <property name="text">
+                   <string>betweenness centrality</string>
                   </property>
                  </widget>
                 </item>
@@ -457,14 +450,17 @@
                </layout>
               </item>
               <item>
-               <layout class="QHBoxLayout" name="horizontalLayout_6">
+               <layout class="QHBoxLayout" name="horizontalLayout_2">
+                <property name="topMargin">
+                 <number>0</number>
+                </property>
                 <item>
-                 <widget class="QRadioButton" name="radioButton_betweenness">
+                 <widget class="QRadioButton" name="radioButton_degree">
                   <property name="enabled">
                    <bool>true</bool>
                   </property>
                   <property name="text">
-                   <string>betweenness centrality</string>
+                   <string>degree centrality</string>
                   </property>
                  </widget>
                 </item>
@@ -481,20 +477,10 @@
                   </property>
                  </spacer>
                 </item>
-               </layout>
-              </item>
-              <item>
-               <layout class="QHBoxLayout" name="horizontalLayout_2">
-                <property name="topMargin">
-                 <number>0</number>
-                </property>
                 <item>
-                 <widget class="QRadioButton" name="radioButton_degree">
-                  <property name="enabled">
-                   <bool>true</bool>
-                  </property>
+                 <widget class="QCheckBox" name="checkBox_centralities_norm">
                   <property name="text">
-                   <string>degree centrality</string>
+                   <string>normalized</string>
                   </property>
                  </widget>
                 </item>

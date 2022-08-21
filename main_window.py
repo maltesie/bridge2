@@ -245,16 +245,11 @@ class Ui_MainWindow(object):
         self.horizontalLayout_9 = QHBoxLayout()
         self.horizontalLayout_9.setObjectName(u"horizontalLayout_9")
         self.horizontalLayout_9.setContentsMargins(0, 0, -1, -1)
-        self.checkBox_centralities_norm = QCheckBox(self.groupBox_centralities)
-        self.checkBox_centralities_norm.setObjectName(u"checkBox_centralities_norm")
+        self.radioButton_betweenness = QRadioButton(self.groupBox_centralities)
+        self.radioButton_betweenness.setObjectName(u"radioButton_betweenness")
+        self.radioButton_betweenness.setEnabled(True)
 
-        self.horizontalLayout_9.addWidget(self.checkBox_centralities_norm)
-
-        self.checkBox_centralities_avg = QCheckBox(self.groupBox_centralities)
-        self.checkBox_centralities_avg.setObjectName(u"checkBox_centralities_avg")
-        self.checkBox_centralities_avg.setChecked(True)
-
-        self.horizontalLayout_9.addWidget(self.checkBox_centralities_avg)
+        self.horizontalLayout_9.addWidget(self.radioButton_betweenness)
 
         self.horizontalSpacer_18 = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
 
@@ -269,21 +264,6 @@ class Ui_MainWindow(object):
 
         self.verticalLayout_8.addLayout(self.horizontalLayout_9)
 
-        self.horizontalLayout_6 = QHBoxLayout()
-        self.horizontalLayout_6.setObjectName(u"horizontalLayout_6")
-        self.radioButton_betweenness = QRadioButton(self.groupBox_centralities)
-        self.radioButton_betweenness.setObjectName(u"radioButton_betweenness")
-        self.radioButton_betweenness.setEnabled(True)
-
-        self.horizontalLayout_6.addWidget(self.radioButton_betweenness)
-
-        self.horizontalSpacer_17 = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
-
-        self.horizontalLayout_6.addItem(self.horizontalSpacer_17)
-
-
-        self.verticalLayout_8.addLayout(self.horizontalLayout_6)
-
         self.horizontalLayout_2 = QHBoxLayout()
         self.horizontalLayout_2.setObjectName(u"horizontalLayout_2")
         self.horizontalLayout_2.setContentsMargins(-1, 0, -1, -1)
@@ -292,6 +272,15 @@ class Ui_MainWindow(object):
         self.radioButton_degree.setEnabled(True)
 
         self.horizontalLayout_2.addWidget(self.radioButton_degree)
+
+        self.horizontalSpacer_17 = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
+
+        self.horizontalLayout_2.addItem(self.horizontalSpacer_17)
+
+        self.checkBox_centralities_norm = QCheckBox(self.groupBox_centralities)
+        self.checkBox_centralities_norm.setObjectName(u"checkBox_centralities_norm")
+
+        self.horizontalLayout_2.addWidget(self.checkBox_centralities_norm)
 
 
         self.verticalLayout_8.addLayout(self.horizontalLayout_2)
@@ -821,11 +810,10 @@ class Ui_MainWindow(object):
         self.comboBox_single_color.setItemText(14, QCoreApplication.translate("MainWindow", u"lavender", None))
 
         self.groupBox_centralities.setTitle(QCoreApplication.translate("MainWindow", u"centrality measures", None))
-        self.checkBox_centralities_norm.setText(QCoreApplication.translate("MainWindow", u"normalized", None))
-        self.checkBox_centralities_avg.setText(QCoreApplication.translate("MainWindow", u"averaged across frames", None))
-        self.checkBox_color_legend.setText(QCoreApplication.translate("MainWindow", u"legend", None))
         self.radioButton_betweenness.setText(QCoreApplication.translate("MainWindow", u"betweenness centrality", None))
+        self.checkBox_color_legend.setText(QCoreApplication.translate("MainWindow", u"legend", None))
         self.radioButton_degree.setText(QCoreApplication.translate("MainWindow", u"degree centrality", None))
+        self.checkBox_centralities_norm.setText(QCoreApplication.translate("MainWindow", u"normalized", None))
         self.groupBox.setTitle(QCoreApplication.translate("MainWindow", u"Sizes", None))
         self.label_3.setText(QCoreApplication.translate("MainWindow", u"nodes:             ", None))
         self.label_6.setText(QCoreApplication.translate("MainWindow", u"edges:             ", None))

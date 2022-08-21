@@ -368,7 +368,7 @@ class InteractiveMPLGraph:
                 self.ax.legend(custom_lines, segnames)
         
         elif self._parent.radioButton_degree.isChecked() or self._parent.radioButton_betweenness.isChecked():
-            avg_type = self._parent.checkBox_centralities_avg.isChecked()
+            avg_type = True
             norm_type =  self._parent.checkBox_centralities_norm.isChecked()
             if self._parent.radioButton_degree.isChecked(): centralities = self._analysis.centralities['degree'][avg_type][norm_type]
             elif self._parent.radioButton_betweenness.isChecked(): centralities = self._analysis.centralities['betweenness'][avg_type][norm_type]
