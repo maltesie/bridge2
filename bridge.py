@@ -630,8 +630,8 @@ starting n-terminal residue: {}\n\n\
 --- FILTER ---\n\n\
 {}\n\n\
 --- RESULTS ---\n\n\
-{}\n".format(self._analysis_parameter['structure'],
-                                            ' ,'.join(self._analysis_parameter['trajectories']),
+{}\n".format(self._analysis_parameter['structure'][-1],
+                                            ' ,'.join(self._analysis_parameter['trajectories'][-1]),
                                             yes_no[self._analysis_parameter['add_donors_without_hydrogen']],
                                             self._analysis_parameter['selection'],
                                             yes_no[self._analysis_parameter['residuewise']],
