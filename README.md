@@ -10,8 +10,8 @@ publication with an examplatory application can be found [here](https://pubs.acs
 
 This is a standalone version of Bridge2. It is written in Python3 (3.7+) and Qt5 and depends 
 on Qt5 (5.14.1+) and the python packages MDAnalysis (0.19.2+) and PySide2 (5.14.1+). 
-After installing  the dependencies you can use the setup script to create a virtual environment 
-with the  necessary python packages in your bridge folder. 
+After installing  the dependencies you can use the bridge script to create a virtual environment 
+with the  necessary python packages in your bridge folder and launch bridge. 
 
 #### IMPORTANT: Deactivate any other virtual environment or conda environment before the installation and before running bridge.
 
