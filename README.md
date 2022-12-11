@@ -45,6 +45,16 @@ Then install the prerequisites:
 
 > brew install qt5 python
 
+#### 1.e Windows 10
+
+Install Python3 from the Windows App Store. Then download and install pip from the command prompt:
+
+> curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py
+
+> python get-pip.py
+
+You can now setup and run bridge by executing the bride.bat script (ignore the next part).
+
 ### 2 Setup and run bridge2
 
 Then run the bridge script:
