@@ -88,6 +88,8 @@ indicated in the lower left corner. When done, an analysis summary can be saved 
 becomes visible in the main window, the three tool tabs on the right can be used. They are 
 titled "Layout", "Filters" and "Computations and Plots". 
 
+#### batch computations
+
 The initial computations can be performed in batches. To run the computations with identical 
 parameters for multiple structures and trajectories, create two text files, one listing the
 paths to the structure files (one per line), and one listing the corresponding trajectories
