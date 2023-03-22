@@ -544,7 +544,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     
     def _set_enabled(self):
         self.checkBox_nb_water.setEnabled(self._search_parameter['algorithm'] == 'ww_dict')
-    
+
     def export_analysis_summary(self):
         yes_no = {True:'Yes', False:'No'}
         result_string = "Bridge2 analysis summary from " + datetime.now().strftime("%d/%m/%Y %H:%M:%S") + "\n\n"
@@ -631,7 +631,7 @@ starting n-terminal residue: {}\n\n\
 {}\n\n\
 --- RESULTS ---\n\n\
 {}\n".format(self._analysis_parameter['structure'][-1],
-                                            ' ,'.join(self._analysis_parameter['trajectories'][-1]),
+                                            ', '.join([t if t is not None else ['no trajectory'] for t in self._analysis_parameter['trajectories']][-1]),
                                             yes_no[self._analysis_parameter['add_donors_without_hydrogen']],
                                             self._analysis_parameter['selection'],
                                             yes_no[self._analysis_parameter['residuewise']],
