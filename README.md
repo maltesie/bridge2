@@ -57,9 +57,9 @@ Install Python3 from the Windows App Store. Then download and install pip from t
 
 Then run the bridge script:
 
-> ./bridge (Linux, macOS)
+> ./bridge2 (Linux, macOS)
 
-> bridge.bat (Windows)
+> bridge2.bat (Windows)
 
 This will create a python virtual environment containing all the necessary packages and start 
 Bridge2 then. If you have any problems with python packages bridge is depending on, please 

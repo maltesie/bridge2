@@ -9,4 +9,4 @@ if exist python3env\ (
   pip install --no-cache-dir -r requirements.txt
 )
 
-python3env\Scripts\python.exe bridge.py
+python3env\Scripts\python.exe bridge2.py
