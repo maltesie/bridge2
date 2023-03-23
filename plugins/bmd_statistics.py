@@ -152,10 +152,10 @@ def save_jo():
     ts, frame_time, frame_unit = compute_jo()
     if ts is None: return
     if frame_time is not None:
-        save_string = 'time_[{}] '.format(frame_unit) + ' '.join((np.arange(len(ts)) * frame_time).astype(np.str)) + '\n'
+        save_string = 'time_[{}] '.format(frame_unit) + ' '.join((np.arange(len(ts)) * frame_time).astype(str)) + '\n'
     else:
-        save_string = 'frame ' + ' '.join(np.arange(len(ts)).astype(np.str)) + '\n'
-    save_string += 'jo ' + ' '.join(ts.astype(np.str))
+        save_string = 'frame ' + ' '.join(np.arange(len(ts)).astype(str)) + '\n'
+    save_string += 'jo ' + ' '.join(ts.astype(str))
     #filename = QFileDialog.getSaveFileName(main_window, 'Save Data', filter='ASCII File (*.txt);;All Files (*.*)')[0]
     #if not filename: return
     #with open(filename, 'w') as f:
@@ -165,8 +165,8 @@ def save_jo():
 def compute_timeseries():
     if segname_colors is None: return None, None, None
     frame_time, frame_unit = main_window._search_parameter['frame_time']
-    su = {(segname,segname):np.zeros(main_window.analysis.nb_frames, dtype=np.int) for segname in segname_colors}
-    su.update({tuple(sorted(combination)):np.zeros(main_window.analysis.nb_frames, dtype=np.int) for combination in combinations(segname_colors.keys(), 2)})
+    su = {(segname,segname):np.zeros(main_window.analysis.nb_frames, dtype=int) for segname in segname_colors}
+    su.update({tuple(sorted(combination)):np.zeros(main_window.analysis.nb_frames, dtype=int) for combination in combinations(segname_colors.keys(), 2)})
     connections = main_window.analysis.filtered_results
     for key, ts in connections.items():
         segn_a, segn_b = get_segnames(key.split(':'))
@@ -203,14 +203,14 @@ def save_timeseries():
     if su is None: return
     
     if frame_time is not None:
-        save_string = 'time_[{}] '.format(frame_unit) + ' '.join((np.arange(main_window.analysis.nb_frames) * frame_time).astype(np.str)) + '\n'
+        save_string = 'time_[{}] '.format(frame_unit) + ' '.join((np.arange(main_window.analysis.nb_frames) * frame_time).astype(str)) + '\n'
     else:
-        save_string = 'frame ' + ' '.join(np.arange(main_window.analysis.nb_frames).astype(np.str)) + '\n'
+        save_string = 'frame ' + ' '.join(np.arange(main_window.analysis.nb_frames).astype(str)) + '\n'
     for segname_combination, ts in su.items():
         segn_a, segn_b = segname_combination
         if segn_a == segn_b: save_string += segn_a 
         else: save_string += '{}-{}'.format(segn_a,segn_b)
-        save_string += ' ' + ' '.join(ts.astype(np.str)) +'\n'
+        save_string += ' ' + ' '.join(ts.astype(str)) +'\n'
     #filename = QFileDialog.getSaveFileName(main_window, 'Save Data', filter='ASCII File (*.txt);;All Files (*.*)')[0]
     #if not filename: return
     #with open(filename, 'w') as f:

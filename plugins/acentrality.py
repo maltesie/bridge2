@@ -93,7 +93,7 @@ def compute_centrality_bar():
     else:
         mi = min(get_resids(main_window.interactive_graph.nodes()))
         ma = max (get_resids(main_window.interactive_graph.nodes()))
-        numbers = np.arange(mi, ma+1, dtype=np.int)
+        numbers = np.arange(mi, ma+1, dtype=int)
     numbers -= main_window.analysis.add_missing_residues
     number_id = {number:i for i,number in enumerate(numbers)}
     segname_id = {segname:i for i,segname in enumerate(segname_colors)}
