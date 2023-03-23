@@ -426,6 +426,7 @@ class NewAnalysisDialog(QDialog, Ui_NewAnalysisDialog):
             elif ww_dict: self.main_window.analysis.set_water_wires(max_water=search_args['max_water'], allow_direct_bonds=search_args['allow_direct_bonds'], water_in_convex_hull=search_args['ww_in_hull'])
             elif hydrophobic: self.main_window.analysis.set_hydrophobic_contacts_in_selection()
             
+
             self.main_window.analysis.add_missing_residues = int(self.lineEdit_add_residue.text())
             self.main_window.analysis.set_node_positions_3d(include_water=include_water)
             self.main_window.analysis.set_centralities()
@@ -887,8 +888,12 @@ starting n-terminal residue: {}\n\n\
         for i in range(self.comboBox_segnames.count()):
             segname = self.comboBox_segnames.itemText(i)
             if segname not in self._segname_colors: self._segname_colors[self.comboBox_segnames.itemText(i)] = default_colors[i]
-        self.comboBox_colors.setCurrentText(self._segname_colors[self.comboBox_segnames.currentText()])
         
+        try: 
+            self.comboBox_colors.setCurrentText(self._segname_colors[self.comboBox_segnames.currentText()])
+        except:
+            if len(self.analysis.initial_results) == 0: Error("Empty results!")
+
         self.radioButton_colors.setChecked(True)
         self.checkBox_bonds_occupancy.setChecked(False)
         self.checkBox_bonds_graph_labels.setChecked(True)

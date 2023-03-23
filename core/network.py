@@ -347,7 +347,7 @@ class NetworkAnalysis:
         else:
             pos = _np.array([value for value in self.get_node_positions_3d(in_frame).values()])
         if projection == 'PCA':
-            pos2d, base = _hf.pca_2d_projection(pos)
+            pos2d, _ = _hf.pca_2d_projection(pos)
         elif projection == 'XY':
             pos2d = pos[:,0:2]
         elif projection == 'ZY':

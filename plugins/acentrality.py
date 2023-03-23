@@ -104,7 +104,7 @@ def compute_centrality_bar():
     average_across_frames = ui.checkBox_averaged_frames.isChecked()
     normalized = ui.checkBox_normalized.isChecked()
     centrality = centralities[centrality_type][average_across_frames][normalized]
-    centrality_per_segname = np.zeros((len(numbers), len(segname_colors)),  dtype=np.float)
+    centrality_per_segname = np.zeros((len(numbers), len(segname_colors)),  dtype=float)
     label_per_segname = np.empty((len(numbers), len(segname_colors)), dtype='<U12')
     for node in centrality:
         segname, resname, resid = get_segname(node), aa_three2one[get_resname(node)], get_resid(node)

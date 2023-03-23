@@ -226,6 +226,7 @@ def filter_occupancy(dictionary, min_occupancy):
     
 
 def pca_2d_projection(pos3d):
+    if len(pos3d) == 0: return np.array([1.0,1.0]), np.array([[1.0,0,0],[0,1.0,0]])
     m = pos3d.mean(axis=0)
     pos3dm = pos3d - m
     S = pos3dm.T.dot(pos3dm)
