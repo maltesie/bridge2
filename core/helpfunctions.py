@@ -159,7 +159,7 @@ def check_angle(atoms_in_distance, heavy2hydrogen, local_coordinates, hydrogen_c
     angles = angle(temp_b, temp_h, temp_a)
     angle_check = angles <= cut_angle
     angle_check_index = np.array(angle_check_index)
-    bond_index = np.asarray(angle_check_index[angle_check.flatten()], dtype=np.int)
+    bond_index = np.asarray(angle_check_index[angle_check.flatten()], dtype=np.int64)
     hbond_pairs = pairs[bond_index]
     return hbond_pairs  
     
@@ -168,7 +168,7 @@ def check_angle_water(atoms_in_distance, oxygen_coordinates, hydrogen_coordinate
     pairs = np.asarray(atoms_in_distance)
     a_index = np.repeat(pairs[:,0], 4)
     b_index = np.repeat(pairs[:,1], 4)
-    hydrogen_index = np.zeros(a_index.size, dtype=np.int)
+    hydrogen_index = np.zeros(a_index.size, dtype=np.int64)
     hydrogen_index[::4] = pairs[:,0] * 2
     hydrogen_index[1::4] = pairs[:,0] * 2 + 1
     hydrogen_index[2::4] = pairs[:,1] * 2
@@ -216,7 +216,7 @@ def filter_occupancy(dictionary, min_occupancy):
     for key in dictionary: 
         dtype = dictionary[key].dtype
         break
-    if dtype == np.int: values = np.array(np.array(list(dictionary.values())) < np.inf, dtype=np.float)
+    if dtype == np.int64: values = np.array(np.array(list(dictionary.values())) < np.inf, dtype=np.float)
     else: values = np.array(list(dictionary.values()), dtype=np.float)
     filter_index = values.mean(axis=1) > min_occupancy
     keys = [key for key in dictionary]
@@ -359,7 +359,7 @@ def histogram_to_string(data, mi=None, ma=None, nb_bins=10, labels=None):
     return string_in_columns(save_string)
 
 def rgb_to_string(rgb):
-    r,g,b,a = (np.array(rgb) * 255).astype(np.int)
+    r,g,b,a = (np.array(rgb) * 255).astype(np.int64)
     return "#{0:02x}{1:02x}{2:02x}".format(r, g, b)
 
 def trans_angle(p1, p2, ax):
@@ -465,7 +465,7 @@ def biological_centrality_2(graph, normalize=False):
             already_found += deep_flatten_recursive(current_paths)
             if len(current_paths[0])>longest: longest = len(current_paths[0])
         all_paths += all_current_paths
-    check_paths = np.ones((len(all_paths), longest), dtype=np.int)*-1
+    check_paths = np.ones((len(all_paths), longest), dtype=np.int64)*-1
     for i, path in enumerate(all_paths): check_paths[i][:len(path)]=path
     for path in all_paths:
         if (np.in1d(path, check_paths).sum(axis=1) == len(path)).sum() > 1:

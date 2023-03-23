@@ -45,7 +45,7 @@ def bar(data, labels, ylabel='Count', integer_y=True, show_zeros=False):
     ax.spines['right'].set_visible(False)
     ax.spines['top'].set_visible(False)
     ax.set_ylabel(ylabel, fontsize = 16)
-    if show_zeros: index = np.arange(len(data), dtype=np.int)
+    if show_zeros: index = np.arange(len(data), dtype=np.int64)
     else: index = data != 0
     data = data[index]
     labels = labels[index]
@@ -69,7 +69,7 @@ def multi_bar(data, labels, colors, ylabel='Count', integer_y=True, show_zeros=F
     nb_plotted = 0
     for i, (segname, color) in enumerate(colors.items()):
         data_row = data[i]
-        if show_zeros: index = np.arange(len(data_row), dtype=np.int)
+        if show_zeros: index = np.arange(len(data_row), dtype=np.int64)
         else: index = data_row != 0
         data_row = data_row[index]
         bar = ax.bar(np.arange(nb_plotted, nb_plotted + len(data_row)), data_row, color=color)
@@ -140,7 +140,7 @@ def boolean_scatter(ts, scatter_size=0.5, frame_time=None, frame_unit=None, xlab
     ax.spines['right'].set_visible(False)
     ax.spines['top'].set_visible(False)
     ax.spines['left'].set_visible(False)
-    ax.scatter(np.arange(ts.size, dtype=np.int), ts, s=scatter_size)
+    ax.scatter(np.arange(ts.size, dtype=np.int64), ts, s=scatter_size)
     ax.set_title('Joint Occupancy: '+str(np.round(ts.mean()*100,1)))
     ax.set_xlim(-1, ts.size)
     ax.set_yticks([-0.5,0.01,1.01,1.5])
