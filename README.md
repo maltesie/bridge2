@@ -1,37 +1,27 @@
 # Bridge2
 
-This program aims to provide an interactive tool to analyze haydrogen bonds and hydrophobic
+This program aims to provide an interactive tool to analyze hydrogen bonds and hydrophobic
 interactions in crystal structures and Molecular Dynamics (MD) simulations. It is compatible 
 with structures and trajectories that can be accessed with [MDAnalysis](https://userguide.mdanalysis.org/1.0.0/formats/index.html). The corresponding
 publication with an examplatory application can be found [here](https://pubs.acs.org/doi/abs/10.1021/acs.jcim.1c00306).
 
-
 ## Installation guide
 
-This is a standalone version of Bridge2. It is written in Python3 (3.7+) and Qt5 and depends 
-on Qt5 (5.14.1+) and the python packages MDAnalysis (0.19.2+) and PySide2 (5.14.1+). 
-After installing  the dependencies you can use the bridge script to create a virtual environment 
-with the  necessary python packages in your bridge folder and launch bridge. 
+For Linux and Windows, there are pre-packed binary versions of the program [here](https://github.com/maltesie/bridge2/releases/). 
+If you encounter problems with the binaries, you can also download the source code, install 
+the dependencies and use the bridge2 script to start the program:
 
 #### IMPORTANT: Deactivate any other virtual environment or conda environment before the installation and before running bridge.
 
 ### 1 Install dependencies
 
-#### 1.a Ubuntu/Debian
+#### 1.a Linux
 
-> sudo apt-get install libxcb-xinerama0 build-essential python3-dev python3-venv
+> sudo apt-get install libxcb-xinerama0 build-essential python3-dev python3-venv (Ubuntu/Debian)
+> bash rhel8_dependencies (RHEL8)
+> sudo dnf install python3-devel (Fedora)
 
-#### 1.b RHEL 8
-
-To install all necessary dependencies, you can run the provided install script:
-
-> bash rhel8_dependencies
-
-#### 1.c Fedora
-
-> sudo dnf install python3-devel
-
-#### 1.d macOS
+#### 1.b macOS
 
 In order to install the required software for Bridge2 to work, we recommend using the 
 Homebrew package manager. The later commands assume it is installed on your system. You can
@@ -45,17 +35,11 @@ Then install the prerequisites:
 
 > brew install qt5 python
 
-#### 1.e Windows 10
+#### 1.c Windows 10
 
-Install Python3 from the Windows App Store. Then download and install pip from the command prompt:
+Install Python3.10 from the Windows App Store.
 
-> curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py
-
-> python get-pip.py
-
-### 2 Setup and run bridge2
-
-Then run the bridge script:
+### 2 Run bridge2
 
 > ./bridge2 (Linux, macOS)
 
@@ -70,7 +54,6 @@ script is run.
 
 If you install a new version of Bridge2, delete your old installation folder and use the new 
 downloaded version instead.
-
 
 ## Usage
 
