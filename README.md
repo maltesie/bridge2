@@ -52,11 +52,6 @@ Bridge2 then. If you have any problems with python packages bridge is depending 
 remove the python3env folder to reinstall the virtual environment the next time the bridge 
 script is run.
 
-### 3 Reinstall or update bridge2
-
-If you install a new version of Bridge2, delete your old installation folder and use the new 
-downloaded version instead.
-
 ## Usage
 
 The usual analysis is split into 4 steps:
@@ -100,6 +95,11 @@ can be reduced to hand-picked nodes of interest.
 
 This tab contains additional computational plugins that aim to produce plots on statistical
 properties of interactions in MD simulations or to further visualize centrality measures.
+
+### Portable save files
+
+Bridge2 can save and reopen an analysis in a .baf file. Those files contain all initial 
+computations results and are independent of the analyzed data files.
 
 ## Copyright notice and disclaimer
 
