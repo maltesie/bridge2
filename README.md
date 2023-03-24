@@ -2,8 +2,8 @@
 
 This program aims to provide an interactive tool to analyze hydrogen bonds and hydrophobic
 interactions in crystal structures and Molecular Dynamics (MD) simulations. It is compatible 
-with structures and trajectories that can be accessed with [MDAnalysis](https://userguide.mdanalysis.org/1.0.0/formats/index.html). The corresponding
-publication with an examplatory application can be found [here](https://pubs.acs.org/doi/abs/10.1021/acs.jcim.1c00306).
+with topology and coordinate file types that are supported by [MDAnalysis](https://userguide.mdanalysis.org/1.0.0/formats/index.html). 
+The corresponding publication with an examplatory application can be found [here](https://pubs.acs.org/doi/abs/10.1021/acs.jcim.1c00306).
 
 ## Installation guide
 
