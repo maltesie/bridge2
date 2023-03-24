@@ -18,7 +18,9 @@ the dependencies and use the bridge2 script to start the program:
 #### 1.a Linux
 
 > sudo apt-get install libxcb-xinerama0 build-essential python3-dev python3-venv (Ubuntu/Debian)
+
 > bash rhel8_dependencies (RHEL8)
+
 > sudo dnf install python3-devel (Fedora)
 
 #### 1.b macOS
