@@ -68,17 +68,16 @@ class HbondAnalysis(NetworkAnalysis):
                 local_hbonds = da_pairs
             
             range_results.append((ts, local_hbonds))
+            if self.progress_callback is not None: self.progress_callback.emit('Computing H bonds in frame {}/{}'.format(ts, self.nb_frames))
         return range_results
     
     def set_hbonds_in_selection(self):
         if self.progress_callback is not None: self.progress_callback.emit('Computing H bonds...')
-        #t0 = time.time()
+
         threads_results = []
-        with concurrent.futures.ThreadPoolExecutor(max_workers=self._threads) as executor:
-            for r in _hf.partition(range(self.nb_frames), max(10, int(self.nb_frames/(self._threads-1)))):
-                threads_results += executor.submit(self._hbonds_in_selection_range, r).result()
-        
-        #print('Time to compute kdtrees: {}s'.format(_np.round(time.time()-t0,5)))
+        for r in _hf.partition(range(self.nb_frames), max(10, int(self.nb_frames/(self._threads-1)))):
+            threads_results += self._hbonds_in_selection_range(r)
+
         self._set_thread_results(threads_results)
         
     def _hbonds_only_water_in_convex_hull(self, r):
@@ -101,15 +100,15 @@ class HbondAnalysis(NetworkAnalysis):
             else:
                 local_hbonds = water_pairs
             range_results.append((ts, local_hbonds))
+            if self.progress_callback is not None: self.progress_callback.emit('Computing H bonds in frame {}/{}'.format(ts, self.nb_frames))
         return range_results
 
     def set_hbonds_only_water_in_convex_hull(self):
         if self.progress_callback is not None: self.progress_callback.emit('Computing H bonds...')
     
         threads_results = []
-        with concurrent.futures.ThreadPoolExecutor(max_workers=self._threads) as executor:
-            for r in _hf.partition(range(self.nb_frames), max(10, int(self.nb_frames/(self._threads-1)))):
-                threads_results += executor.submit(self._hbonds_only_water_in_convex_hull, r).result()
+        for r in _hf.partition(range(self.nb_frames), max(10, int(self.nb_frames/(self._threads-1)))):
+            threads_results += self._hbonds_only_water_in_convex_hull(r)
 
         self._set_thread_results(threads_results)
     
@@ -146,15 +145,15 @@ class HbondAnalysis(NetworkAnalysis):
             else:
                 hbonds = list(da_pairs) + water_pairs + local_pairs
             range_results.append((ts, hbonds))
+            if self.progress_callback is not None: self.progress_callback.emit('Computing H bonds in frame {}/{}'.format(ts, self.nb_frames))
         return range_results
 
     def set_hbonds_in_selection_and_water_in_convex_hull(self):
         if self.progress_callback is not None: self.progress_callback.emit('Computing H bonds...')
         
         threads_results = []
-        with concurrent.futures.ThreadPoolExecutor(max_workers=self._threads) as executor:
-            for r in _hf.partition(range(self.nb_frames), max(10, int(self.nb_frames/(self._threads-1)))):
-                threads_results += executor.submit(self._hbonds_in_selection_and_water_in_convex_hull_range, r).result()
+        for r in _hf.partition(range(self.nb_frames), max(10, int(self.nb_frames/(self._threads-1)))):
+            threads_results += self._hbonds_in_selection_and_water_in_convex_hull_range(r)
                 
         self._set_thread_results(threads_results)
     
@@ -202,23 +201,21 @@ class HbondAnalysis(NetworkAnalysis):
     
             hbonds = _np.array(hbonds)
             range_results.append((ts, hbonds))
+            if self.progress_callback is not None: self.progress_callback.emit('Computing H bonds in frame {}/{}'.format(ts, self.nb_frames))
         return range_results
 
     def set_hbonds_in_selection_and_water_around(self, around_radius, not_water_water=False):
-        if self.progress_callback is not None: self.progress_callback.emit('Computing H bonds...')
-        
         threads_results = []
-        with concurrent.futures.ThreadPoolExecutor(max_workers=self._threads) as executor:
-            for r in _hf.partition(range(self.nb_frames), max(10, int(self.nb_frames/(self._threads-1)))):
-                threads_results += executor.submit(self._hbonds_in_selection_and_water_around_range, r, around_radius, not_water_water).result()
+        for r in _hf.partition(range(self.nb_frames), max(10, int(self.nb_frames/(self._threads-1)))):
+            threads_results += self._hbonds_in_selection_and_water_around_range(r, around_radius, not_water_water)
                 
         self._set_thread_results(threads_results)
         
     
-    def add_disulphide_bridges_in_selection(self):
-        frame_count = 0
-        result = {}
-        for ts in self._universe.trajectory[self._trajectory_slice]:
+    def _disulphide_bridges_in_selection_range(self, r):
+        range_results = []
+        for ts in r:
+            self._universe.trajectory[ts]
             selection_coordinates = self._da_selection.positions
             d_tree = _sp.cKDTree(self._donors.positions)
             a_tree = _sp.cKDTree(self._acceptors.positions)
@@ -233,23 +230,17 @@ class HbondAnalysis(NetworkAnalysis):
             else:
                 local_hbonds = da_pairs
             
-            sorted_bonds = _np.sort(local_hbonds)
-            check = self._resids[sorted_bonds]
-            check = check[:,0] < check[:,1]
-            if self.residuewise: frame_res = [self._all_ids[i] + ':' + self._all_ids[j] if check[ii] else self._all_ids[j] + ':' + self._all_ids[i] for ii, (i, j) in enumerate(sorted_bonds)]
-            
-            for bond in frame_res:
-                a, b = bond.split(':')
-                if a == b: continue
-                try:
-                    result[bond][frame_count] = True
-                except:
-                    result[bond] = _np.zeros(self.nb_frames, dtype=bool)
-                    result[bond][frame_count] = True
-            frame_count+=1
-            if self.progress_callback is not None: self.progress_callback.emit('Computing H bonds in frame {}/{}'.format(frame_count, self.nb_frames))
-        self._set_results(result)
+            range_results.append((ts, local_hbonds))
+            if self.progress_callback is not None: self.progress_callback.emit('Computing disulphide bridges in frame {}/{}'.format(ts, self.nb_frames))
+        return range_results
     
+    def add_disulphide_bridges_in_selection(self):
+        threads_results = []
+        for r in _hf.partition(range(self.nb_frames), max(10, int(self.nb_frames/(self._threads-1)))):
+            threads_results += self._disulphide_bridges_in_selection_range(r)
+                
+        self._set_thread_results(threads_results)
+
     def get_endurance_times(self, as_labels=False, frame_time=None, frame_unit=None):
         results = self.initial_results
         endurance_times = {}

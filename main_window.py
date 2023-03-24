@@ -90,7 +90,7 @@ class Ui_MainWindow(object):
         self.toolBox.setMaximumSize(QSize(520, 16777215))
         self.toolBoxPage_layout = QWidget()
         self.toolBoxPage_layout.setObjectName(u"toolBoxPage_layout")
-        self.toolBoxPage_layout.setGeometry(QRect(0, 0, 532, 738))
+        self.toolBoxPage_layout.setGeometry(QRect(0, 0, 520, 754))
         self.verticalLayout_3 = QVBoxLayout(self.toolBoxPage_layout)
         self.verticalLayout_3.setObjectName(u"verticalLayout_3")
         self.groupBox_3 = QGroupBox(self.toolBoxPage_layout)
@@ -299,6 +299,9 @@ class Ui_MainWindow(object):
         self.horizontalLayout_10.setObjectName(u"horizontalLayout_10")
         self.label_3 = QLabel(self.groupBox)
         self.label_3.setObjectName(u"label_3")
+        sizePolicy.setHeightForWidth(self.label_3.sizePolicy().hasHeightForWidth())
+        self.label_3.setSizePolicy(sizePolicy)
+        self.label_3.setMinimumSize(QSize(100, 0))
 
         self.horizontalLayout_10.addWidget(self.label_3)
 
@@ -321,6 +324,9 @@ class Ui_MainWindow(object):
         self.horizontalLayout_13.setContentsMargins(-1, 0, -1, -1)
         self.label_6 = QLabel(self.groupBox)
         self.label_6.setObjectName(u"label_6")
+        sizePolicy.setHeightForWidth(self.label_6.sizePolicy().hasHeightForWidth())
+        self.label_6.setSizePolicy(sizePolicy)
+        self.label_6.setMinimumSize(QSize(100, 0))
 
         self.horizontalLayout_13.addWidget(self.label_6)
 
@@ -343,6 +349,9 @@ class Ui_MainWindow(object):
         self.horizontalLayout_14.setContentsMargins(-1, 0, -1, -1)
         self.label_7 = QLabel(self.groupBox)
         self.label_7.setObjectName(u"label_7")
+        sizePolicy.setHeightForWidth(self.label_7.sizePolicy().hasHeightForWidth())
+        self.label_7.setSizePolicy(sizePolicy)
+        self.label_7.setMinimumSize(QSize(100, 0))
 
         self.horizontalLayout_14.addWidget(self.label_7)
 
@@ -432,7 +441,7 @@ class Ui_MainWindow(object):
         self.toolBox.addItem(self.toolBoxPage_layout, u"Layout")
         self.toolBoxPage_filters = QWidget()
         self.toolBoxPage_filters.setObjectName(u"toolBoxPage_filters")
-        self.toolBoxPage_filters.setGeometry(QRect(0, 0, 660, 738))
+        self.toolBoxPage_filters.setGeometry(QRect(0, 0, 520, 754))
         self.verticalLayout_4 = QVBoxLayout(self.toolBoxPage_filters)
         self.verticalLayout_4.setObjectName(u"verticalLayout_4")
         self.verticalSpacer_6 = QSpacerItem(20, 20, QSizePolicy.Minimum, QSizePolicy.Fixed)
@@ -662,7 +671,7 @@ class Ui_MainWindow(object):
         self.toolBox.addItem(self.toolBoxPage_filters, u"Filters")
         self.toolBoxPage_computations = QWidget()
         self.toolBoxPage_computations.setObjectName(u"toolBoxPage_computations")
-        self.toolBoxPage_computations.setGeometry(QRect(0, 0, 520, 752))
+        self.toolBoxPage_computations.setGeometry(QRect(0, 0, 520, 754))
         self.verticalLayout_6 = QVBoxLayout(self.toolBoxPage_computations)
         self.verticalLayout_6.setObjectName(u"verticalLayout_6")
         self.horizontalLayout_11 = QHBoxLayout()
@@ -704,7 +713,7 @@ class Ui_MainWindow(object):
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QMenuBar(MainWindow)
         self.menubar.setObjectName(u"menubar")
-        self.menubar.setGeometry(QRect(0, 0, 1638, 31))
+        self.menubar.setGeometry(QRect(0, 0, 1638, 26))
         self.menuEdit = QMenu(self.menubar)
         self.menuEdit.setObjectName(u"menuEdit")
         self.menuHelp = QMenu(self.menubar)

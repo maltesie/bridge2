@@ -1,7 +1,12 @@
 from . import helpfunctions as _hf
 import numpy as _np
 import networkx as _nx
-import MDAnalysis as _MDAnalysis
+import warnings
+
+with warnings.catch_warnings():
+    warnings.filterwarnings("ignore", category=DeprecationWarning)
+    import MDAnalysis as _MDAnalysis
+
 from copy import deepcopy
 import concurrent.futures
 import time
@@ -216,46 +221,41 @@ class NetworkAnalysis:
         for i in r:
             g_i = self._compute_graph_in_frame(i, use_filtered=use_filtered)
             if centrality_type == 'betweenness': 
-                centrality_i = _nx.betweenness_centrality(g_i, normalized=False)
-                nb_nodes = len(centrality_i)
+                centrality_normalized_i = _nx.betweenness_centrality(g_i, normalized=True)
+                nb_nodes = len(centrality_normalized_i)
                 normalization_factor = (nb_nodes - 1)*(nb_nodes - 2)/2
+                centrality_i = {key:value*normalization_factor for key, value in centrality_normalized_i.items()}
             elif centrality_type == 'degree': 
-                centrality_i = _nx.degree_centrality(g_i)
-                normalization_factor = len(centrality_i)
-                centrality_i = {key:value*normalization_factor for key, value in centrality_i.items()}
+                centrality_normalized_i = _nx.degree_centrality(g_i)
+                normalization_factor = len(centrality_normalized_i)-1
+                centrality_i = {key:value*normalization_factor for key, value in centrality_normalized_i.items()}
             else: 
                 raise AssertionError("centrality_type has to be 'betweenness' or 'degree' or 'biological'")
-            if normalization_factor == 0: normalization_factor = 1.0
-            centrality_normalized_i = {key:value/normalization_factor for key, value in centrality_i.items()}
             centralities.append((i,centrality_i,centrality_normalized_i))
-        #print(time.time()-t0)
+            if self.progress_callback is not None: self.progress_callback.emit('Computing {} centrality in frame {}/{}'.format(centrality_type, i, self.nb_frames))
+
         return centralities
     
-    def compute_centrality(self, centrality_type='betweenness', average_across_frames=True, use_filtered=True):
+    def compute_centrality(self, centrality_type='betweenness', use_filtered=True):
         if use_filtered: graph = self.filtered_graph
         else: graph = self.initial_graph 
-        if average_across_frames: frames = self.nb_frames
-        else: frames = 1
-        #t0 = time.time()
+        frames = self.nb_frames
+
         if self.progress_callback is not None: self.progress_callback.emit('Computing {} centrality'.format(centrality_type))
         centralities = {node:_np.zeros(frames) for node in graph.nodes()}
         centralities_normalized = {node:_np.zeros(frames) for node in graph.nodes()}
-        returns = []
-        #print(self._threads)
-        with concurrent.futures.ThreadPoolExecutor(max_workers=self._threads) as executor:
-            for r in _hf.partition(range(frames), max(10, int(frames/(self._threads-1)))):
-                returns += executor.submit(self._centrality_per_frame_range, r, centrality_type, use_filtered).result()
-            #returns += executor.submit(self._centrality_per_frame_range, range(frames), centrality_type, use_filtered).result()
-        #print('Time to compute threads {}s'.format(_np.round(time.time()-t0,5)))
-        for i, centrality_i, centrality_normalized_i in returns:
-            for node in centrality_i: 
-                centralities[node][i] = centrality_i[node]
-                centralities_normalized[node][i] = centrality_normalized_i[node]
-            
+
+        for r in _hf.partition(range(frames), max(10, int(frames/(self._threads-1)))):
+            for i, centrality_i, centrality_normalized_i in self._centrality_per_frame_range(r, centrality_type, use_filtered): 
+                for node in centrality_i: 
+                    centralities[node][i] = centrality_i[node]
+                    centralities_normalized[node][i] = centrality_normalized_i[node]   
+
         for node in centralities: 
             centralities[node] = _hf.round_to_1(centralities[node].mean())
             centralities_normalized[node] = _hf.round_to_1(centralities_normalized[node].mean())
-        #print('Time to compute {} centrality: {}s'.format(centrality_type, _np.round(time.time()-t0,5)))
+        
+
         return centralities, centralities_normalized
     
     def _reload_universe(self):
@@ -282,7 +282,7 @@ class NetworkAnalysis:
                 water_hydrogen = []
         else:
             water_hydrogen = []
-        #water_hydrogen = [h for l in self._water for h in l.residue.atoms[1:]]
+
         if not sorted_selection.hydrogens and not water_hydrogen: 
             if self._check_angle: raise AssertionError('There are no possible hbond donors in the selection and no water. Since check_angle is True, hydrogen is needed for the calculations!')
             else: hydrogen = _hf.EmptyGroup()
@@ -302,15 +302,10 @@ class NetworkAnalysis:
         return occupancies
 
     def set_centralities(self):
-        
-        betweenness_avg, betweenness_avg_norm = self.compute_centrality(centrality_type='betweenness', average_across_frames=True, use_filtered=False)
-        betweenness_tot, betweenness_tot_norm = self.compute_centrality(centrality_type='betweenness', average_across_frames=False, use_filtered=False)
-        degree_avg, degree_avg_norm = self.compute_centrality(centrality_type='degree', average_across_frames=True, use_filtered=False)
-        degree_tot, degree_tot_norm = self.compute_centrality(centrality_type='degree', average_across_frames=False, use_filtered=False)
-        self.centralities = {'betweenness':{True:{True:betweenness_avg_norm, False:betweenness_avg},
-                                            False:{True:betweenness_tot_norm, False:betweenness_tot}},
-                             'degree':{True:{True:degree_avg_norm, False:degree_avg},
-                                       False:{True:degree_tot_norm, False:degree_tot}}}
+        betweenness, betweenness_norm = self.compute_centrality(centrality_type='betweenness', use_filtered=False)
+        degree, degree_norm = self.compute_centrality(centrality_type='degree', use_filtered=False)
+        self.centralities = {'betweenness':{True:betweenness_norm, False:betweenness},
+                             'degree':{True:degree_norm, False:degree}}
 
     def get_centralities(self):
         return self.centralities
@@ -327,7 +322,7 @@ class NetworkAnalysis:
             if self.progress_callback is not None: self.progress_callback.emit('Extracting positional information from frame {}'.format(in_frame))
             self._universe.trajectory[in_frame]
             if include_water: all_coordinates = _np.vstack((self._da_selection.positions, self._water.positions.reshape((-1,3))))
-            else: all_coordinates = _np.array(self._da_selection.positions)
+            else: all_coordinates = self._da_selection.positions.copy()
             for node in nodes:
                 try:
                     self._node_positions_3d[node][i] = all_coordinates[all_id == node].mean(0)

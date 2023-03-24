@@ -368,13 +368,13 @@ class InteractiveMPLGraph:
                 self.ax.legend(custom_lines, segnames)
         
         elif self._parent.radioButton_degree.isChecked() or self._parent.radioButton_betweenness.isChecked():
-            avg_type = True
+
             norm_type =  self._parent.checkBox_centralities_norm.isChecked()
-            if self._parent.radioButton_degree.isChecked(): centralities = self._analysis.centralities['degree'][avg_type][norm_type]
-            elif self._parent.radioButton_betweenness.isChecked(): centralities = self._analysis.centralities['betweenness'][avg_type][norm_type]
+            if self._parent.radioButton_degree.isChecked(): centralities = self._analysis.centralities['degree'][norm_type]
+            elif self._parent.radioButton_betweenness.isChecked(): centralities = self._analysis.centralities['betweenness'][norm_type]
             
             max_centrality = sorted(centralities.values())[-1]
-            if self._parent.radioButton_degree.isChecked() and (not (avg_type or norm_type)): max_centrality = round(max_centrality)
+            if self._parent.radioButton_degree.isChecked() and (not norm_type): max_centrality = round(max_centrality)
             cmap = plt.get_cmap('jet')
             for node in centralities:
                 centrality_value = centralities[node]

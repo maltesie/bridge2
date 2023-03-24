@@ -39,7 +39,6 @@ def load(parent):
     ui.groupBox_per_residue.toggled.connect(toggle_histogram)
     ui.groupBox_histogram.toggled.connect(toggle_per_residue)
     ui.checkBox_normalized.toggled.connect(update_min_max)
-    ui.checkBox_averaged_frames.toggled.connect(update_min_max)
     ui.radioButton_degree.toggled.connect(update_min_max)
     ui.radioButton_betweenness.toggled.connect(update_min_max)
 
@@ -60,9 +59,8 @@ def update_min_max():
         centrality_type = 'betweenness'
     else:
         centrality_type = 'degree'
-    average_across_frames = ui.checkBox_averaged_frames.isChecked()
     normalized = ui.checkBox_normalized.isChecked()
-    centrality = centralities[centrality_type][average_across_frames][normalized]
+    centrality = centralities[centrality_type][normalized]
     mi, ma = min(centrality.values()), max(centrality.values())
     try: significant = int(np.log10(ma-mi))
     except: significant = 1
@@ -91,8 +89,10 @@ def compute_centrality_bar():
         else:
             numbers = np.unique(numbers)
     else:
-        mi = min(get_resids(main_window.interactive_graph.nodes()))
-        ma = max (get_resids(main_window.interactive_graph.nodes()))
+        #mi = min(get_resids(main_window.interactive_graph.nodes()))
+        #ma = max(get_resids(main_window.interactive_graph.nodes()))
+        mi = min(get_resids(main_window.analysis.filtered_graph.nodes()))
+        ma = max(get_resids(main_window.analysis.filtered_graph.nodes()))
         numbers = np.arange(mi, ma+1, dtype=int)
     numbers -= main_window.analysis.add_missing_residues
     number_id = {number:i for i,number in enumerate(numbers)}
@@ -101,12 +101,11 @@ def compute_centrality_bar():
         centrality_type = 'betweenness'
     else:
         centrality_type = 'degree'
-    average_across_frames = ui.checkBox_averaged_frames.isChecked()
     normalized = ui.checkBox_normalized.isChecked()
-    centrality = centralities[centrality_type][average_across_frames][normalized]
+    centrality = centralities[centrality_type][normalized]
     centrality_per_segname = np.zeros((len(numbers), len(segname_colors)),  dtype=float)
     label_per_segname = np.empty((len(numbers), len(segname_colors)), dtype='<U12')
-    for node in centrality:
+    for node in main_window.analysis.filtered_graph.nodes():
         segname, resname, resid = get_segname(node), aa_three2one[get_resname(node)], get_resid(node)
         if resid not in numbers: continue
         segname_i, resid_i = segname_id[segname], number_id[resid]
@@ -123,7 +122,7 @@ def plot_centrality_bar():
     centrality_per_segname, label_per_segname = compute_centrality_bar()
     segname_id = {segname:i for i,segname in enumerate(segname_colors)}
     segname = ui.comboBox.currentText()
-    integer_y = ui.radioButton_degree.isChecked() & (not ui.checkBox_averaged_frames.isChecked()) & (not ui.checkBox_normalized.isChecked())
+    integer_y = ui.radioButton_degree.isChecked() & (not ui.checkBox_normalized.isChecked())
     if segname != 'all':
         centrality, labels = centrality_per_segname[segname_id[segname]], label_per_segname[segname_id[segname]]
         bar(data=centrality, labels=labels, ylabel='{} Centrality'.format(centrality_type), integer_y=integer_y, show_zeros=False)
@@ -170,29 +169,8 @@ def plot_centrality():
 
 def save_centrality():
     if centralities is None: return
-    csv_columns = ['residue','degree_normalized_averaged', 'degree_normalized_not-averaged', 
-                   'degree_not-normalized_averaged', 'degree_not-normalized_not-averaged', 
-                   'betweenness_normalized_averaged', 'betweenness_normalized_not-averaged', 
-                   'betweenness_not-normalized_averaged', 'betweenness_not-normalized_not-averaged']
-    #csv_file = QFileDialog.getSaveFileName(main_window, 'Save Centrality', filter='ASCII File (*.txt);;All Files (*.*)')[0]
-    #if not csv_file: return
-    #try:
-    #    with open(csv_file, 'w') as csvfile:
-    #        writer = csv.DictWriter(csvfile, fieldnames=csv_columns)
-    #        writer.writeheader()
-    #        for node in main_window.interactive_graph.nodes():
-    #            data_row = {'residue':node,
-    #                        'degree_normalized_averaged': centralities['degree'][True][True][node], 
-    #                        'degree_normalized_not-averaged': centralities['degree'][False][True][node], 
-    #                        'degree_not-normalized_averaged': centralities['degree'][True][False][node], 
-    #                        'degree_not-normalized_not-averaged': centralities['degree'][False][False][node], 
-    #                        'betweenness_normalized_averaged': centralities['betweenness'][True][True][node], 
-    #                        'betweenness_normalized_not-averaged': centralities['betweenness'][False][True][node], 
-    #                        'betweenness_not-normalized_averaged': centralities['betweenness'][True][False][node], 
-    #                        'betweenness_not-normalized_not-averaged': centralities['betweenness'][False][False][node]}
-    #            writer.writerow(data_row)
-    #except IOError:
-    #    Error('I/O Error!', 'Could not write to disc.')
+    csv_columns = ['residue', 'degree', 'degree_norm', 'betweenness', 'betweenness_norm']
+
     save_string = '\t'.join([column for column in csv_columns]) + '\n'
     for node in sorted(main_window.interactive_graph.nodes()):
         if main_window.analysis.residuewise: 
@@ -203,21 +181,18 @@ def save_centrality():
             segname, resname, resid, atom_name = node.split('-')
             resid = str(int(resid)+main_window.analysis.add_missing_residues)
             node_label = '-'.join([segname, resname, resid, atom_name])
-        save_string += '\t'.join([node_label, str(centralities['degree'][True][True][node]), 
-                                  str(centralities['degree'][False][True][node]), 
-                                  str(centralities['degree'][True][False][node]), 
-                                  str(centralities['degree'][False][False][node]), 
-                                  str(centralities['betweenness'][True][True][node]), 
-                                  str(centralities['betweenness'][False][True][node]), 
-                                  str(centralities['betweenness'][True][False][node]), 
-                                  str(centralities['betweenness'][False][False][node])]) + '\n'
+        save_string += '\t'.join([node_label, 
+                str(centralities['degree'][False][node]),
+                str(centralities['degree'][True][node]),  
+                str(centralities['betweenness'][False][node]), 
+                str(centralities['betweenness'][True][node])]) + '\n'
     main_window.results_dialog.show_results(save_string)
             
 class Ui_GroupBox(object):
     def setupUi(self, GroupBox):
         if not GroupBox.objectName():
             GroupBox.setObjectName(u"GroupBox")
-        GroupBox.resize(528, 576)
+        GroupBox.resize(528, 609)
         sizePolicy = QSizePolicy(QSizePolicy.Preferred, QSizePolicy.Minimum)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -273,12 +248,6 @@ class Ui_GroupBox(object):
 
 
         self.verticalLayout_3.addLayout(self.horizontalLayout_2)
-
-        self.checkBox_averaged_frames = QCheckBox(self.groupBox_degree)
-        self.checkBox_averaged_frames.setObjectName(u"checkBox_averaged_frames")
-        self.checkBox_averaged_frames.setChecked(True)
-
-        self.verticalLayout_3.addWidget(self.checkBox_averaged_frames)
 
         self.checkBox_normalized = QCheckBox(self.groupBox_degree)
         self.checkBox_normalized.setObjectName(u"checkBox_normalized")
@@ -460,10 +429,6 @@ class Ui_GroupBox(object):
         self.groupBox_degree.setTitle(QCoreApplication.translate("GroupBox", u"Plots", None))
         self.radioButton_betweenness.setText(QCoreApplication.translate("GroupBox", u"betweenness centrality", None))
         self.radioButton_degree.setText(QCoreApplication.translate("GroupBox", u"degree centrality", None))
-#if QT_CONFIG(tooltip)
-        self.checkBox_averaged_frames.setToolTip(QCoreApplication.translate("GroupBox", u"<html><head/><body><p align=\"justify\">Toggle, if absolute number of connections or time averaged number of connections are used.</p></body></html>", None))
-#endif // QT_CONFIG(tooltip)
-        self.checkBox_averaged_frames.setText(QCoreApplication.translate("GroupBox", u"average across frames", None))
         self.checkBox_normalized.setText(QCoreApplication.translate("GroupBox", u"normalized", None))
         self.groupBox_per_residue.setTitle(QCoreApplication.translate("GroupBox", u"Per Residue", None))
         self.label_2.setText(QCoreApplication.translate("GroupBox", u"segment: ", None))
@@ -487,4 +452,3 @@ class Ui_GroupBox(object):
 #endif // QT_CONFIG(tooltip)
         self.pushButton_degree_plot.setText(QCoreApplication.translate("GroupBox", u"Plot", None))
     # retranslateUi
-

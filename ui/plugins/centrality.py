@@ -17,7 +17,7 @@ class Ui_GroupBox(object):
     def setupUi(self, GroupBox):
         if not GroupBox.objectName():
             GroupBox.setObjectName(u"GroupBox")
-        GroupBox.resize(528, 576)
+        GroupBox.resize(528, 609)
         sizePolicy = QSizePolicy(QSizePolicy.Preferred, QSizePolicy.Minimum)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -73,12 +73,6 @@ class Ui_GroupBox(object):
 
 
         self.verticalLayout_3.addLayout(self.horizontalLayout_2)
-
-        self.checkBox_averaged_frames = QCheckBox(self.groupBox_degree)
-        self.checkBox_averaged_frames.setObjectName(u"checkBox_averaged_frames")
-        self.checkBox_averaged_frames.setChecked(True)
-
-        self.verticalLayout_3.addWidget(self.checkBox_averaged_frames)
 
         self.checkBox_normalized = QCheckBox(self.groupBox_degree)
         self.checkBox_normalized.setObjectName(u"checkBox_normalized")
@@ -260,10 +254,6 @@ class Ui_GroupBox(object):
         self.groupBox_degree.setTitle(QCoreApplication.translate("GroupBox", u"Plots", None))
         self.radioButton_betweenness.setText(QCoreApplication.translate("GroupBox", u"betweenness centrality", None))
         self.radioButton_degree.setText(QCoreApplication.translate("GroupBox", u"degree centrality", None))
-#if QT_CONFIG(tooltip)
-        self.checkBox_averaged_frames.setToolTip(QCoreApplication.translate("GroupBox", u"<html><head/><body><p align=\"justify\">Toggle, if absolute number of connections or time averaged number of connections are used.</p></body></html>", None))
-#endif // QT_CONFIG(tooltip)
-        self.checkBox_averaged_frames.setText(QCoreApplication.translate("GroupBox", u"average across frames", None))
         self.checkBox_normalized.setText(QCoreApplication.translate("GroupBox", u"normalized", None))
         self.groupBox_per_residue.setTitle(QCoreApplication.translate("GroupBox", u"Per Residue", None))
         self.label_2.setText(QCoreApplication.translate("GroupBox", u"segment: ", None))

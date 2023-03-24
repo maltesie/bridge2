@@ -602,7 +602,7 @@ def round_to_1(x):
     if x == 0.:
         return 0.
     elif x<1:
-        return round(x, -int(np.floor(np.log10(abs(x)))))
+        return round(x, -int(np.floor(np.log10(abs(x))))+1)
     else:
         return np.round(x, 1)
     

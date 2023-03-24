@@ -61,8 +61,8 @@
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>532</width>
-         <height>738</height>
+         <width>520</width>
+         <height>754</height>
         </rect>
        </property>
        <attribute name="label">
@@ -502,6 +502,18 @@
             <layout class="QHBoxLayout" name="horizontalLayout_10">
              <item>
               <widget class="QLabel" name="label_3">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="minimumSize">
+                <size>
+                 <width>100</width>
+                 <height>0</height>
+                </size>
+               </property>
                <property name="text">
                 <string>nodes:             </string>
                </property>
@@ -539,6 +551,18 @@
              </property>
              <item>
               <widget class="QLabel" name="label_6">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="minimumSize">
+                <size>
+                 <width>100</width>
+                 <height>0</height>
+                </size>
+               </property>
                <property name="text">
                 <string>edges:             </string>
                </property>
@@ -576,6 +600,18 @@
              </property>
              <item>
               <widget class="QLabel" name="label_7">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="minimumSize">
+                <size>
+                 <width>100</width>
+                 <height>0</height>
+                </size>
+               </property>
                <property name="text">
                 <string>edge labels:   </string>
                </property>
@@ -733,8 +769,8 @@
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>660</width>
-         <height>738</height>
+         <width>520</width>
+         <height>754</height>
         </rect>
        </property>
        <attribute name="label">
@@ -1193,7 +1229,7 @@
          <x>0</x>
          <y>0</y>
          <width>520</width>
-         <height>752</height>
+         <height>754</height>
         </rect>
        </property>
        <attribute name="label">
@@ -1271,7 +1307,7 @@
      <x>0</x>
      <y>0</y>
      <width>1638</width>
-     <height>31</height>
+     <height>26</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuEdit">

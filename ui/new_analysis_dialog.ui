@@ -9,8 +9,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>787</width>
-    <height>713</height>
+    <width>813</width>
+    <height>745</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -70,7 +70,7 @@
            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;For structure files, that do not contain hydrogen atoms.&lt;/p&gt;&lt;p align=&quot;justify&quot;&gt;This option turns off the angle check in the H bond detection and uses all possible donors regardless of their protonation state. If set to false, only protonated donors are considered.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
           </property>
           <property name="text">
-           <string>crystal structure</string>
+           <string>no hydrogen</string>
           </property>
          </widget>
         </item>

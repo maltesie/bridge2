@@ -61,33 +61,6 @@ class Ui_Dialog(object):
 
         self.verticalLayout_3.addWidget(self.groupBox_3)
 
-        self.groupBox_4 = QGroupBox(Dialog)
-        self.groupBox_4.setObjectName(u"groupBox_4")
-        self.horizontalLayout_4 = QHBoxLayout(self.groupBox_4)
-        self.horizontalLayout_4.setObjectName(u"horizontalLayout_4")
-        self.label = QLabel(self.groupBox_4)
-        self.label.setObjectName(u"label")
-
-        self.horizontalLayout_4.addWidget(self.label)
-
-        self.lineEdit_threads = QLineEdit(self.groupBox_4)
-        self.lineEdit_threads.setObjectName(u"lineEdit_threads")
-        sizePolicy = QSizePolicy(QSizePolicy.Minimum, QSizePolicy.Fixed)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.lineEdit_threads.sizePolicy().hasHeightForWidth())
-        self.lineEdit_threads.setSizePolicy(sizePolicy)
-        self.lineEdit_threads.setMinimumSize(QSize(60, 0))
-
-        self.horizontalLayout_4.addWidget(self.lineEdit_threads)
-
-        self.horizontalSpacer_3 = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
-
-        self.horizontalLayout_4.addItem(self.horizontalSpacer_3)
-
-
-        self.verticalLayout_3.addWidget(self.groupBox_4)
-
         self.horizontalLayout = QHBoxLayout()
         self.horizontalLayout.setObjectName(u"horizontalLayout")
         self.horizontalSpacer = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
@@ -127,8 +100,6 @@ class Ui_Dialog(object):
         self.groupBox.setTitle(QCoreApplication.translate("Dialog", u"Acceptor atom names", None))
         self.groupBox_2.setTitle(QCoreApplication.translate("Dialog", u"Donor atom names", None))
         self.groupBox_3.setTitle(QCoreApplication.translate("Dialog", u"Water oxygen selection", None))
-        self.groupBox_4.setTitle(QCoreApplication.translate("Dialog", u"Additional settings", None))
-        self.label.setText(QCoreApplication.translate("Dialog", u"Threads", None))
         self.pushButton_cancel.setText(QCoreApplication.translate("Dialog", u"Cancel", None))
         self.pushButton_reset.setText(QCoreApplication.translate("Dialog", u"Default", None))
         self.pushButton_save.setText(QCoreApplication.translate("Dialog", u"Save", None))

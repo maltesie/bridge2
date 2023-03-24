@@ -78,16 +78,13 @@ class DefaultAtomsDialog(QDialog, Ui_DefaultAtomsDialog):
                 donors = f.readline()
                 acceptors = f.readline()
                 water_def = f.readline().strip()
-                threads = int(f.readline().strip())
         else:
             donors = ', '.join(donor_names_global)
             acceptors = ', '.join(acceptor_names_global)
             water_def = water_definition
-            threads = 2
             self.plainTextEdit_donors.setPlainText(donors)
             self.plainTextEdit_acceptors.setPlainText(acceptors)
             self.lineEdit_water.setText(water_def)
-            self.lineEdit_threads.setText(str(threads))
             self.save()
         self.plainTextEdit_donors.clear()
         self.plainTextEdit_acceptors.clear()
@@ -95,12 +92,9 @@ class DefaultAtomsDialog(QDialog, Ui_DefaultAtomsDialog):
         self.plainTextEdit_acceptors.setPlainText(acceptors)
         self.lineEdit_water.clear()
         self.lineEdit_water.setText(water_def)
-        self.lineEdit_threads.clear()
-        self.lineEdit_threads.setText(str(threads))
         self.default_donors = {donor.strip() for donor in donors.split(',')}
         self.default_acceptors = {acceptor.strip() for acceptor in acceptors.split(',')}
         self.default_water = water_def
-        self.threads = threads
 
     def save(self):
         dir_path = os.path.dirname(os.path.realpath(__file__))
@@ -108,13 +102,11 @@ class DefaultAtomsDialog(QDialog, Ui_DefaultAtomsDialog):
         donors = self.plainTextEdit_donors.toPlainText().strip().replace('\n', ' ')
         acceptors = self.plainTextEdit_acceptors.toPlainText().replace('\n', ' ')
         water_def = self.lineEdit_water.text()
-        threads = self.lineEdit_threads.text()
         self.default_donors = {donor.strip() for donor in donors.split(',')}
         self.default_acceptors = {acceptor.strip() for acceptor in acceptors.split(',')}
         self.default_water = water_def
-        self.threads = int(threads)
         with open(ini_file, 'w') as f:
-            f.write(donors + '\n' + acceptors + '\n' + water_def + '\n' + threads)
+            f.write(donors + '\n' + acceptors + '\n' + water_def)
         self.close()
             
     def cancel(self):
@@ -244,7 +236,6 @@ class NewAnalysisDialog(QDialog, Ui_NewAnalysisDialog):
         add_donors = set(self.main_window.default_atoms_dialog.default_donors)
         add_acceptors = set(self.main_window.default_atoms_dialog.default_acceptors)
         water_def = self.main_window.default_atoms_dialog.default_water
-        threads = self.main_window.default_atoms_dialog.threads
         if consider_backbone:
             add_donors |= {'N'}
             add_acceptors |= {'O'}
@@ -359,8 +350,7 @@ class NewAnalysisDialog(QDialog, Ui_NewAnalysisDialog):
             'additional_acceptors':add_acceptors,
             'water_definition':water_def,
             'add_all_donor_acceptor':add_all_donor_acceptor,
-            'add_donors_without_hydrogen':crytal_structure,
-            'threads':threads
+            'add_donors_without_hydrogen':crytal_structure
             }
         
         self.main_window._analysis_parameter = kwargs
@@ -388,7 +378,6 @@ class NewAnalysisDialog(QDialog, Ui_NewAnalysisDialog):
     def compute_initial_state(self, **kwargs):
         all_structure, all_trajectories = kwargs["structure"].copy(), kwargs["trajectories"].copy()
         batch_mode = kwargs["batch_mode"]
-        threads = kwargs["threads"]
         del kwargs["batch_mode"]
         for i, (structure, trajectories) in enumerate(zip(all_structure, all_trajectories)):
             kwargs["structure"] = structure

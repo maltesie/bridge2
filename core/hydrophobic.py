@@ -8,12 +8,13 @@ class HydrophobicAnalysis(NetworkAnalysis):
     
     def __init__(self, selection=None, structure=None, trajectories=None, distance=5., 
                  partially_hydrophobic_residues=True, start=None, stop=None, step=1, 
-                 residuewise=False, progress_callback=None, restore_filename=None):
+                 residuewise=False, progress_callback=None, threads=2, restore_filename=None):
         
         if restore_filename != None: 
             self.load_from_file(restore_filename)
             return
         
+        self._threads = threads
         self.progress_callback = progress_callback
         if selection==None: raise AssertionError('No selection string.')
         if structure==None: raise AssertionError('No structure file path.')

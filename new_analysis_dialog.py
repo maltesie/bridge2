@@ -18,7 +18,7 @@ class Ui_Dialog(object):
         if not Dialog.objectName():
             Dialog.setObjectName(u"Dialog")
         Dialog.setWindowModality(Qt.WindowModal)
-        Dialog.resize(787, 713)
+        Dialog.resize(813, 745)
         sizePolicy = QSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -448,7 +448,7 @@ class Ui_Dialog(object):
 #if QT_CONFIG(tooltip)
         self.checkBox_bonds_donors_without_hydrogen.setToolTip(QCoreApplication.translate("Dialog", u"<html><head/><body><p>For structure files, that do not contain hydrogen atoms.</p><p align=\"justify\">This option turns off the angle check in the H bond detection and uses all possible donors regardless of their protonation state. If set to false, only protonated donors are considered.</p></body></html>", None))
 #endif // QT_CONFIG(tooltip)
-        self.checkBox_bonds_donors_without_hydrogen.setText(QCoreApplication.translate("Dialog", u"crystal structure", None))
+        self.checkBox_bonds_donors_without_hydrogen.setText(QCoreApplication.translate("Dialog", u"no hydrogen", None))
 #if QT_CONFIG(tooltip)
         self.line_bonds_trajectories.setToolTip(QCoreApplication.translate("Dialog", u"<html><head/><body><p align=\"justify\">One or more trajectory files (.dcd or other) can be provided opionally.</p></body></html>", None))
 #endif // QT_CONFIG(tooltip)
